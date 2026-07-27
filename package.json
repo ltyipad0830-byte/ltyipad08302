@@ -1,0 +1,16 @@
+{
+  "name": "exam-lec-finder",
+  "version": "1.0.0",
+  "description": "22개정 교육과정 인강 통합 검색 앱",
+  "dependencies": {
+    "@google/genai": "*",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
+  "devDependencies": {
+    "react-scripts": "5.0.1"
+  },
+  "scripts": {
+    "build": "react-scripts build"
+  }
+}
