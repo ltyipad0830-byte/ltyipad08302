@@ -224,7 +224,7 @@
 <img class="w-full h-full object-cover opacity-80" data-alt="TOEIC Textbook Cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5VaARD3L-P3s9HJaCtWpv5qV6YI6hDsv-3quJyU_raI4jcuzqx19LvvLLQvFjuOOXeOuObvQgSsf8VdRPTv6HDK6nwMvFd87OSCcGWaT13HWoadgpGgybsZMjoX9jxwBiCW-GLQM94AxOhFzj9YGOv-XyCBtd7fNNDKM5-3PIvsWnC0J5080nc_fYyoEECUuJYpjpboMRlC0DXHhY3V5bEEcMnv68LdXoRp8AKYZQpJ_gnvHEa2ma">
 <div class="absolute top-2 left-2 bg-error text-on-error px-2 py-1 rounded-sm text-[10px] font-bold">BEST</div>
 </div>
-<h4 class="text-sm font-bold text-on-surface line-clamp-1">토익 고득점 전략</h4>
+<h4 class="text-sm font-bold text-on-surface line-template">토익 고득점 전략</h4>
 <p class="text-xs text-outline mb-1">YBM 에듀</p>
 <div class="flex items-center justify-between">
 <span class="text-primary font-bold text-sm">18,000원</span>
@@ -289,7 +289,7 @@
 <!-- AI Recommendations -->
 <a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors" href="#">
 <span class="material-symbols-outlined">auto_awesome</span>
-<span class="text-[10px] font-bold mt-1">AI 추천</span>
+<span class="text-[10px] font-bold md-1">AI 추천</span>
 </a>
 <!-- Profile -->
 <a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors" href="#">
@@ -298,27 +298,14 @@
 </a>
 </nav>
 
-<!-- Firebase SDK 및 연동 스크립트 -->
+<!-- Firebase SDK 및 연동 스크립트 (별도 파일 분리형 구조) -->
 <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCXrKi4aRxokPSIaflsZFcuWDrHo5rdFnQ",
-            authDomain: "lecture-a7915.firebaseapp.com",
-            projectId: "lecture-a7915",
-            storageBucket: "lecture-a7915.firebasestorage.app",
-            messagingSenderId: "235676860540",
-            appId: "1:235676860540:web:1ed3d95d0b3b519dc6c9f9"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        import { db } from "./firebase.js";
+        import { collection, addDoc, getDocs, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const form = document.getElementById('feedbackForm');
         const feedbackList = document.getElementById('feedbackList');
 
-        // 게시글 목록 불러오기
         async function loadFeedbacks() {
             feedbackList.innerHTML = '<p class="text-xs text-outline text-center py-2">의견을 불러오는 중...</p>';
             try {
@@ -350,7 +337,6 @@
             }
         }
 
-        // 의견 작성 이벤트
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const name = document.getElementById('writerName').value;
@@ -371,12 +357,10 @@
             }
         });
 
-        // 페이지 로드 시 목록 조회
         loadFeedbacks();
     </script>
 
 <script>
-        // Scroll interaction for header
         window.addEventListener('scroll', () => {
             const header = document.querySelector('header');
             if (window.scrollY > 20) {
@@ -388,7 +372,6 @@
             }
         });
 
-        // Search input focus effect
         const searchInput = document.querySelector('input');
         if(searchInput) {
             searchInput.addEventListener('focus', () => {
