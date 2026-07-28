@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
+import { db } from './firebase';
+import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from 'firebase/firestore';
 
 export default function App() {
   const [currentTab, setCurrentTab] = useState('recommend'); // 'recommend' or 'board'
@@ -13,26 +15,31 @@ export default function App() {
   const [selectedLecture, setSelectedLecture] = useState(null);
   const [cache, setCache] = useState({});
 
-  // 게시판 관련 상태 (초기 샘플 후기 포함)
-  const [posts, setPosts] = useState([
-    {
-      id: 1,
-      author: '고3 수험생',
-      title: '미적분 강사 추천 정리 정말 유용합니다!',
-      content: '메가스터디랑 대성마이맥 강사진 비교가 한눈에 되어서 너무 좋네요. 덕분에 나한테 맞는 개념 강의 쉽게 찾았습니다. 감사합니다!',
-      date: '2026-03-29'
-    },
-    {
-      id: 2,
-      author: '수학공부러',
-      title: '공통수학2 커리큘럼 후기 남깁니다.',
-      content: '시중 교재 연동 기능이 있어서 문제집 고를 때 참고하기 너무 편해요. 게시판 생겨서 서로 의견 나누기 더 좋아진 듯!',
-      date: '2026-03-28'
-    }
-  ]);
+  // 게시판 관련 상태 (Firebase Firestore 실시간 연동)
+  const [posts, setPosts] = useState([]);
+  const [boardLoading, setBoardLoading] = useState(true);
   const [newAuthor, setNewAuthor] = useState('');
   const [newTitle, setNewTitle] = useState('');
   const [newContent, setNewContent] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const postList = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        date: doc.data().createdAt ? new Date(doc.data().createdAt.toDate()).toISOString().slice(0, 10) : '방금 전'
+      }));
+      setPosts(postList);
+      setBoardLoading(false);
+    }, (err) => {
+      console.error("Firestore error:", err);
+      setBoardLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -79,25 +86,31 @@ export default function App() {
     }
   };
 
-  const handlePostSubmit = (e) => {
+  const handlePostSubmit = async (e) => {
     e.preventDefault();
     if (!newAuthor.trim() || !newTitle.trim() || !newContent.trim()) {
       alert('작성자, 제목, 내용을 모두 입력해주세요.');
       return;
     }
 
-    const newPost = {
-      id: Date.now(),
-      author: newAuthor.trim(),
-      title: newTitle.trim(),
-      content: newContent.trim(),
-      date: new Date().toISOString().slice(0, 10)
-    };
+    setSubmitting(true);
+    try {
+      await addDoc(collection(db, "posts"), {
+        author: newAuthor.trim(),
+        title: newTitle.trim(),
+        content: newContent.trim(),
+        createdAt: serverTimestamp()
+      });
 
-    setPosts([newPost, ...posts]);
-    setNewAuthor('');
-    setNewTitle('');
-    setNewContent('');
+      setNewAuthor('');
+      setNewTitle('');
+      setNewContent('');
+    } catch (err) {
+      console.error("Error adding post: ", err);
+      alert('글 등록 중 오류가 발생했습니다.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -122,7 +135,7 @@ export default function App() {
             onClick={() => setCurrentTab('board')}
             className={`edu-nav-btn ${currentTab === 'board' ? 'active' : ''}`}
           >
-            💬 사용자 의견 게시판
+            💬 사용자 의견 게시판 (Live)
           </button>
         </div>
       </header>
@@ -280,13 +293,13 @@ export default function App() {
             )}
           </>
         ) : (
-          /* Board Tab */
+          /* Board Tab (Firebase 실시간 연동) */
           <div className="edu-board-container">
             <div className="edu-hero" style={{ marginBottom: '20px' }}>
-              <span className="edu-badge">💬 사용자 의견 및 후기 공유</span>
+              <span className="edu-badge">💬 사용자 의견 및 후기 공유 (실시간 동기화)</span>
               <h1 className="edu-title" style={{ fontSize: '28px' }}>학습자 소통 공간</h1>
               <p className="edu-subtitle">
-                인강 추천 서비스 이용 후기나 개선 의견을 자유롭게 남겨주세요.
+                다른 PC나 기기에서 남긴 후기와 의견도 실시간으로 반영됩니다!
               </p>
             </div>
 
@@ -324,8 +337,8 @@ export default function App() {
                   className="edu-form-textarea"
                 />
               </div>
-              <button type="submit" className="edu-submit-btn" style={{ width: '100%' }}>
-                의견 등록하기
+              <button type="submit" disabled={submitting} className="edu-submit-btn" style={{ width: '100%' }}>
+                {submitting ? '등록 중...' : '실시간 의견 등록하기'}
               </button>
             </form>
 
@@ -334,20 +347,28 @@ export default function App() {
               <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#e1e2ed', marginBottom: '16px' }}>
                 📋 전체 의견 및 후기 ({posts.length}개)
               </h3>
-              <div className="edu-board-list">
-                {posts.map((post) => (
-                  <div key={post.id} className="edu-post-card">
-                    <div className="edu-post-header">
-                      <div>
-                        <span className="edu-instructor-name" style={{ marginRight: '10px' }}>{post.title}</span>
-                        <span className="edu-site-tag">{post.author}</span>
+              {boardLoading ? (
+                <div style={{ textAlign: 'center', padding: '30px', color: '#c2c6d7' }}>데이터를 불러오는 중입니다...</div>
+              ) : posts.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '30px', color: '#8c90a0', backgroundColor: '#1d1f27', borderRadius: '12px', border: '1px solid #334155' }}>
+                  등록된 후기가 없습니다. 첫 번째 후기를 남겨보세요!
+                </div>
+              ) : (
+                <div className="edu-board-list">
+                  {posts.map((post) => (
+                    <div key={post.id} className="edu-post-card">
+                      <div className="edu-post-header">
+                        <div>
+                          <span className="edu-instructor-name" style={{ marginRight: '10px' }}>{post.title}</span>
+                          <span className="edu-site-tag">{post.author}</span>
+                        </div>
+                        <span className="edu-post-date">{post.date}</span>
                       </div>
-                      <span className="edu-post-date">{post.date}</span>
+                      <p className="edu-post-content">{post.content}</p>
                     </div>
-                    <p className="edu-post-content">{post.content}</p>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         )}
