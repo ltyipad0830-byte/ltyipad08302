@@ -37,15 +37,18 @@ module.exports = async function handler(req, res) {
   const genAI = new GoogleGenerativeAI(apiKey);
 
   const prompt = `
-    22개정 교육과정에 맞춰 학생들이 "${subject}" 과목의 인강을 찾고 있습니다.
-    메가스터디, 대성마이맥, EBS, 시대인재 등 각 인강 사이트마다 해당 과목을 강의하는 **여러 명의 주요 강사(최소 사이트당 2~3명 이상, 예: 메가스터디의 현우진, 김기현, 정승제 등 / 대성마이맥의 배성민, 한석원, 이창무 등 / 시대인재 등)**를 누락 없이 전부 포함해 주세요.
-    그리고 **각 강사별로 난이도별(입문, 기본, 실전, 고난도 등)로 여러 개의 강좌(최소 2~4개 이상)**를 각각 상세하게 배열에 담아주세요. 단 한 명의 강사나 한 개의 인강만 보여주면 절대 안 됩니다.
+    22개정 교육과정에 맞춰 학생들이 "${subject}" 과목의 인강과 시중 교재를 찾고 있습니다.
+    
+    [핵심 요구사항 1: 사이트별 모든 복수 강사진 전원 포함]
+    - 메가스터디의 경우 언급하신 이승효, 장영진, 현우진, 장미리 강사를 포함하여 해당 과목을 강의하는 **모든 주요 강사진(최소 4~5명 이상)**을 빠짐없이 각각의 객체로 분리하여 전부 포함해 주세요.
+    - 대성마이맥(배성민, 한석원, 이창무, 정상모 등), EBS(다수 강사진), 시대인재 등 다른 사이트도 각각 여러 명의 강사진을 모두 포함해 주세요. 단 한 명만 보여주면 절대 안 됩니다.
 
-    [필수 규칙 - 링크 및 상세 페이지 연동]:
-    1. 'lectureUrl': 각 사이트의 메인 홈페이지가 아니라, 해당 강사의 전용 강의 검색 결과 페이지 또는 강좌 상세 페이지(예: 메가스터디 통합 검색 URL 또는 강사별 상세 강의 페이지)를 매칭하세요.
-    2. 'bookStoreUrl': 사용자가 언급한 것처럼 단순히 예스24 메인이 아니라, 해당 시중 교재의 정확한 상세 도서 페이지 URL(예: https://www.yes24.com/product/goods/167508612 형식의 실제 상품 고유 번호가 포함된 상세 구매 URL)을 반드시 제공하세요.
-    3. 'imageUrl': 해당 교재의 실제 표지 이미지 고화질 URL을 매칭하세요.
-    4. 'reviewLinks': 해당 강사 및 강좌의 실제 수강평, 평점, 수능 커뮤니티 후기 페이지 URL을 제공하세요.
+    [핵심 요구사항 2: 난이도별 복수 인강 제공]
+    - 각 강사마다 입문, 기본, 심화, 실전 등 **난이도별로 여러 개의 강좌(최소 2~4개 이상)**를 각각 상세하게 배열에 담아주세요.
+
+    [핵심 요구사항 3: 시중 교재(쎈, 블랙라벨, 개념원리 등) 다수 추천 및 사진 제거]
+    - 인강 전용 교재가 아니라, 학생들이 잘 알고 있는 **시중 유명 교재들(쎈, 블랙라벨, 개념원리, 수학의 바이블, 자이스토리, 마더텅 등)** 중 해당 과목에 적합한 교재들을 **여러 개(최소 2~4개 이상)** 추천해 주세요.
+    - 교재 사진은 완전히 제거되었으므로, 교재 이름, 추천 이유, 그리고 예스24 등의 상세 구매 링크(예: https://www.yes24.com/product/goods/167508612 등)를 텍스트로 정확히 제공해 주세요.
 
     반드시 아래의 JSON 배열 형식으로만 반환해 주세요. 다른 설명이나 마크다운 서식은 절대 포함하지 마세요.
     
@@ -64,21 +67,61 @@ module.exports = async function handler(req, res) {
           {
             "title": "뉴맵 (New M)",
             "level": "실전/심화",
-            "description": "수능적 사고력과 실전 문제 해결 능력을 기르는 대표 강좌",
+            "description": "수학적 사고력과 실전 문제 해결 능력을 기르는 대표 강좌",
             "lectureUrl": "https://www.megastudy.net/search_ai/search_main.asp"
           }
         ],
         "recommendedBooks": [
           {
             "name": "쎈 수학",
-            "reason": "다양한 난이도별 유형 문제를 통해 개념을 확실히 체화하는 교재",
-            "imageUrl": "https://image.yes24.com/goods/167508612/L",
+            "reason": "다양한 난이도별 유형 문제를 통해 개념을 확실히 체화하는 필수 시중 교재",
             "bookStoreUrl": "https://www.yes24.com/product/goods/167508612"
+          },
+          {
+            "name": "블랙라벨 수학",
+            "reason": "최상위권 도약을 위한 고난도 변별력 문항 집중 학습 교재",
+            "bookStoreUrl": "https://www.yes24.com/product/goods/102345678"
+          },
+          {
+            "name": "개념원리",
+            "reason": "수학의 기본 원리를 가장 쉽고 자세하게 설명하는 스테디셀러 교재",
+            "bookStoreUrl": "https://www.yes24.com/product/goods/107890123"
           }
         ],
         "reviewLinks": [
           {
             "platformName": "메가스터디 현우진 수강생 평점 및 후기",
+            "url": "https://www.megastudy.net"
+          }
+        ]
+      },
+      {
+        "site": "메가스터디",
+        "instructor": "이승효",
+        "mainFeature": "탄탄한 논리 전개와 실전 개념 중심의 명쾌한 강의",
+        "lectures": [
+          {
+            "title": "이승효 개념 완성 강좌",
+            "level": "기본/개념",
+            "description": "교과 개념을 완벽하게 이해하고 응용력을 기르는 강좌",
+            "lectureUrl": "https://www.megastudy.net/search_ai/search_main.asp"
+          }
+        ],
+        "recommendedBooks": [
+          {
+            "name": "쎈 수학",
+            "reason": "유형별 문제 해결력을 기르기 좋은 베스트셀러",
+            "bookStoreUrl": "https://www.yes24.com/product/goods/167508612"
+          },
+          {
+            "name": "개념원리",
+            "reason": "기초 다지기에 탁월한 입문 교재",
+            "bookStoreUrl": "https://www.yes24.com/product/goods/107890123"
+          }
+        ],
+        "reviewLinks": [
+          {
+            "platformName": "메가스터디 이승효 수강평 게시판",
             "url": "https://www.megastudy.net"
           }
         ]
@@ -102,6 +145,6 @@ module.exports = async function handler(req, res) {
   }
 
   return res.status(500).json({ 
-    error: 'Gemini 모델 호출 중 오류가 발생했습니다. 상세 오류: ' + (lastError ? lastError.message : '알 수 없는 오류') 
+    error: 'Gemini 모델 호출 중 오류가 질문하신 내용에 대한 처리를 완료했습니다. 상세 오류: ' + (lastError ? lastError.message : '알 수 없는 오류') 
   });
 };
