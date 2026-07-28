@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html class="dark" lang="ko" style="">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>EduAI - Smart Learning Platform</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Hanken+Grotesk:wght@600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "primary": "#afc6ff",
+                "on-primary-fixed": "#001944",
+                "surface-dim": "#10131b",
+                "inverse-surface": "#e1e2ed",
+                "on-secondary-fixed": "#270058",
+                "surface-tint": "#afc6ff",
+                "outline": "#8c90a0",
+                "tertiary-container": "#e96c16",
+                "on-background": "#e1e2ed",
+                "on-secondary-container": "#c6a5ff",
+                "on-primary-fixed-variant": "#004299",
+                "on-secondary-fixed-variant": "#55338d",
+                "on-tertiary-container": "#4a1c00",
+                "on-error-container": "#ffdad6",
+                "on-primary-container": "#00275f",
+                "inverse-on-surface": "#2d3039",
+                "on-surface": "#e1e2ed",
+                "tertiary": "#ffb68f",
+                "on-tertiary": "#542100",
+                "on-secondary": "#3e1975",
+                "surface-variant": "#32353d",
+                "tertiary-fixed-dim": "#ffb68f",
+                "secondary-container": "#55338d",
+                "on-primary": "#002d6d",
+                "surface-container-highest": "#32353d",
+                "error-container": "#93000a",
+                "primary-fixed-dim": "#afc6ff",
+                "surface-bright": "#363941",
+                "surface": "#10131b",
+                "primary-container": "#528dff",
+                "surface-container-high": "#272a32",
+                "on-tertiary-fixed-variant": "#773200",
+                "on-tertiary-fixed": "#331100",
+                "error": "#ffb4ab",
+                "secondary-fixed": "#ebdcff",
+                "primary-fixed": "#d9e2ff",
+                "outline-variant": "#424754",
+                "background": "#10131b",
+                "surface-container-lowest": "#0b0e15",
+                "secondary": "#d4bbff",
+                "tertiary-fixed": "#ffdbca",
+                "on-surface-variant": "#c2c6d7",
+                "surface-container": "#1d1f27",
+                "surface-container-low": "#191b23",
+                "on-error": "#690005",
+                "secondary-fixed-dim": "#d4bbff"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.125rem",
+                "lg": "0.25rem",
+                "xl": "0.5rem",
+                "full": "0.75rem"
+            },
+            "spacing": {
+                "gutter": "16px",
+                "margin-desktop": "40px",
+                "base": "8px",
+                "container-padding": "24px",
+                "margin-mobile": "16px"
+            },
+            "fontFamily": {
+                "headline-lg": ["Hanken Grotesk"],
+                "label-md": ["JetBrains Mono"],
+                "headline-lg-mobile": ["Hanken Grotesk"],
+                "headline-xl": ["Hanken Grotesk"],
+                "body-sm": ["Inter"],
+                "body-md": ["Inter"]
+            },
+            "fontSize": {
+                "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4 { font-family: 'Hanken Grotesk', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .ai-glow {
+            box-shadow: 0 0 20px rgba(175, 198, 255, 0.15);
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 flex items-center justify-between px-margin-mobile h-16 bg-surface-container border-b border-outline-variant transition-colors duration-200">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-primary hover:bg-surface-container-high p-2 rounded-full transition-colors">menu</button>
+<img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzhDSU5nlJgEpnH4ODUtx6GtomT4CXVvIjFts4yvhXAq8AVek3pNjzjaS40H6vgaEgPJgLzidMxhjYeVpmPGa_yQZQkXK5nJrsqecQUJXU-ChyIBpqmUhChaR3mH66sdMgRTqcvhmcLsGKlfboVfv012QQ4GHxHgWwsE7hHxgsG7__VZGsHOa1epjqGQzta_4fio3SX7ST8q_MFeiENFCeFtEsftLLSeMbjLXafnpy3NlR8V5jCOEA" alt="EduAI Logo" class="h-8 w-auto object-contain bg-transparent">
+</div>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container shadow-sm">
+<img class="w-full h-full object-cover" data-alt="User profile portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApJjKNgotPh7so47QzQrEmoFaXL7bNvsOTlrb7lfmaiNS5L5_yvCsHoeZUmWW58Vuv_Dw_N5cKbVSAh-nT6gauJ4M8s4lGoXJy9g8JkURCnkRL9nNy_ojjs7P7W8XLv_JbBycESdUEG4uGNe63aA73I526ZxF5Jjiap5EZqwA-d0iH9G_BIm2QyQdUPdilkyChU9aXE_EPMBE-IJQ4SlLvYl6hcjE9yHXc2nswQxw-rxDhMauE4qVe">
+</div>
+</header>
+<main class="pt-20 px-margin-mobile max-w-max-width-content mx-auto">
+<!-- Greeting Header -->
+<section class="mt-8 mb-6">
+<h2 class="text-headline-lg-mobile text-on-surface leading-tight">
+                안녕하세요, 민지님!<br>
+<span class="text-primary font-bold">어떤 강의를 찾고 계신가요?</span>
+</h2>
+</section>
+<!-- AI Search Section -->
+<section class="mb-10">
+<div class="relative group">
+<div class="absolute -inset-1 bg-gradient-to-r from-primary to-secondary rounded-xl blur opacity-20 group-focus-within:opacity-40 transition duration-300"></div>
+<div class="relative flex items-center bg-surface-container-low border border-outline-variant rounded-xl p-1 ai-glow">
+<span class="material-symbols-outlined px-4 text-secondary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<input class="w-full bg-transparent border-none focus:ring-0 text-body-md py-4 text-on-surface placeholder:text-outline" placeholder="궁금한 주제나 과목을 입력하세요" type="text">
+<button class="bg-primary text-on-primary px-6 py-3 rounded-lg mr-1 font-semibold text-sm hover:opacity-90 transition-all active:scale-95">검색</button>
+</div>
+</div>
+<div class="flex gap-2 mt-4 overflow-x-auto no-scrollbar">
+<span class="bg-surface-container-high text-on-surface-variant px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap border border-outline-variant"># 파이썬 기초</span>
+<span class="bg-surface-container-high text-on-surface-variant px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap border border-outline-variant"># 비즈니스 영어</span>
+<span class="bg-surface-container-high text-on-surface-variant px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap border border-outline-variant"># 수능 수학</span>
+<span class="bg-surface-container-high text-on-surface-variant px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap border border-outline-variant"># AI 데이터 분석</span>
+</div>
+</section>
+<!-- AI Recommendations Section 1: Courses -->
+<section class="mb-12">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-bold flex items-center gap-2 text-on-surface">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">recommend</span>
+                    AI 강의 추천
+                </h3>
+<button class="text-primary text-sm font-medium">전체보기</button>
+</div>
+<div class="flex gap-gutter overflow-x-auto no-scrollbar pb-4 -mx-margin-mobile px-margin-mobile">
+<!-- Course Card 1 -->
+<div class="min-w-[280px] bg-surface-container rounded-xl border border-outline-variant overflow-hidden hover:border-outline transition-colors cursor-pointer">
+<div class="h-40 bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover opacity-80" data-alt="Python Course Thumbnail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9OPbuu5gVod3qGP7iblD_SSGf-4mffVwttx7tnJK9ARhVfq_PRwmg4tJyfxnWksgkqsT8bQY6hpI5gi38TcnFYpbLbuB5zx135SiUy6zqf6Sr9vdTcn_N24Hhlg6i02iSX77l8X8dnud8iB-Y3XzUcb8yhzulqp1WWxmXIlCi33NeAmmySQfBL7HmEiCgh8otI1ycOBIct6UYha7pYUOfKMlY6_NvbOPCeaAzW5tXln8b4rODF781">
+</div>
+<div class="p-4">
+<span class="text-secondary text-xs font-medium mb-1 block">인기 급상승</span>
+<h4 class="text-body-md font-bold text-on-surface mb-2">기초 파이썬 프로그래밍</h4>
+<div class="flex items-center gap-1 mb-3">
+<span class="material-symbols-outlined text-tertiary text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-sm font-medium text-on-surface">4.8</span>
+<span class="text-xs text-outline">(1,240)</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary w-3/4 h-full"></div>
+</div>
+<p class="text-xs text-outline mt-2">75% 진행 중</p>
+</div>
+</div>
+<!-- Course Card 2 -->
+<div class="min-w-[280px] bg-surface-container rounded-xl border border-outline-variant overflow-hidden hover:border-outline transition-colors cursor-pointer">
+<div class="h-40 bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover opacity-80" data-alt="Business English Course Thumbnail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbAkaC6LMK821B-iiXaIO1qVEYMbdwDbDsmIXlGId3ob-s4bXwkfEYsLR6bdUWjiLcYBistfWabU5hT3WdsinUmNbQXrax1X9lBM3FONVqn2q1wjM81aDEZHD4TD-_6kWxc2PIN7a3Wak3hFHi7ZPs4qlev3jWAmVpuKCqzEOsH6xfwtyOvwArW9wy6Pst6Lk5MMwcv9uV3obzoV1HmTlwRqaAOVnMLjJHsAeisv7V6jSoYmQ5QIv2">
+</div>
+<div class="p-4">
+<span class="text-tertiary text-xs font-medium mb-1 block">AI 매칭 98%</span>
+<h4 class="text-body-md font-bold text-on-surface mb-2">실전 비즈니스 영어</h4>
+<div class="flex items-center gap-1 mb-3">
+<span class="material-symbols-outlined text-tertiary text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-sm font-medium text-on-surface">4.9</span>
+<span class="text-xs text-outline">(850)</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary w-1/4 h-full"></div>
+</div>
+<p class="text-xs text-outline mt-2">25% 진행 중</p>
+</div>
+</div>
+</div>
+</section>
+<!-- AI Recommendations Section 2: Textbooks -->
+<section class="mb-12">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-bold flex items-center gap-2 text-on-surface">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">auto_stories</span>
+                    AI 교재 추천
+                </h3>
+<button class="text-primary text-sm font-medium">전체보기</button>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<!-- Textbook 1 -->
+<div class="group cursor-pointer">
+<div class="aspect-[3/4] bg-surface-container-high rounded-xl mb-3 overflow-hidden border border-outline-variant group-hover:border-outline transition-all relative">
+<img class="w-full h-full object-cover opacity-80" data-alt="Math Textbook Cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDs6Dt9lb5jv9LRy4j3NSByDd5WgIx5Uc3xRSuC704vfljmXm-sVDDDzBUlrZtB0luVHq1t8uH34hRZ0yaETSv2QLCgtlZQfUFz0SxB6KgqZg8LcJPlwUJGz7-AhayNw4ZYtAY9f1gjqutHmKsj41QBd1TivXXuGbujcg3wyax8PmwKbUC7joe4ZOeqdVHc2i5rWSiE4GAgSRhTtShbwIwMseK9SRSfYDK9jcsy8Lj2lvz2UiKCaZki">
+<div class="absolute bottom-2 right-2 bg-secondary text-on-secondary-fixed px-2 py-1 rounded-sm text-[10px] font-bold ai-glow">AI 맞춤</div>
+</div>
+<h4 class="text-sm font-bold text-on-surface line-clamp-1">AI로 배우는 수학 정석</h4>
+<p class="text-xs text-outline mb-1">정석학술연구소</p>
+<div class="flex items-center justify-between">
+<span class="text-primary font-bold text-sm">24,500원</span>
+<div class="flex items-center">
+<span class="material-symbols-outlined text-[12px] text-tertiary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-[10px] text-on-surface ml-0.5">4.7</span>
+</div>
+</div>
+</div>
+<!-- Textbook 2 -->
+<div class="group cursor-pointer">
+<div class="aspect-[3/4] bg-surface-container-high rounded-xl mb-3 overflow-hidden border border-outline-variant group-hover:border-outline transition-all relative">
+<img class="w-full h-full object-cover opacity-80" data-alt="TOEIC Textbook Cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5VaARD3L-P3s9HJaCtWpv5qV6YI6hDsv-3quJyU_raI4jcuzqx19LvvLLQvFjuOOXeOuObvQgSsf8VdRPTv6HDK6nwMvFd87OSCcGWaT13HWoadgpGgybsZMjoX9jxwBiCW-GLQM94AxOhFzj9YGOv-XyCBtd7fNNDKM5-3PIvsWnC0J5080nc_fYyoEECUuJYpjpboMRlC0DXHhY3V5bEEcMnv68LdXoRp8AKYZQpJ_gnvHEa2ma">
+<div class="absolute top-2 left-2 bg-error text-on-error px-2 py-1 rounded-sm text-[10px] font-bold">BEST</div>
+</div>
+<h4 class="text-sm font-bold text-on-surface line-clamp-1">토익 고득점 전략</h4>
+<p class="text-xs text-outline mb-1">YBM 에듀</p>
+<div class="flex items-center justify-between">
+<span class="text-primary font-bold text-sm">18,000원</span>
+<div class="flex items-center">
+<span class="material-symbols-outlined text-[12px] text-tertiary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-[10px] text-on-surface ml-0.5">4.9</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Banner Section -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-primary-container to-secondary-container rounded-xl p-6 relative overflow-hidden text-on-primary-container border border-primary/20">
+<div class="relative z-10 max-w-[70%]">
+<h3 class="text-xl font-bold mb-2">프리미엄 멤버십</h3>
+<p class="text-sm opacity-90 mb-4">AI 튜터와 1:1 무제한 대화를 시작해보세요!</p>
+<button class="bg-surface text-on-surface font-bold px-6 py-2 rounded-lg text-sm shadow-lg hover:scale-105 transition-transform">시작하기</button>
+</div>
+<div class="absolute right-[-30px] bottom-[-40px] opacity-10 rotate-12">
+<span class="material-symbols-outlined text-[180px]" style="font-variation-settings: 'wght' 700;">auto_awesome</span>
+</div>
+</div>
+</section>
+
+<!-- Firebase Feedback/Board Section (사용자 의견 수렴 게시판) -->
+<section class="mb-12 bg-surface-container p-6 rounded-xl border border-outline-variant">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-bold flex items-center gap-2 text-on-surface">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">forum</span>
+                    사용자 의견 게시판 (Firebase 연동)
+                </h3>
+</div>
+<p class="text-sm text-outline mb-4">플랫폼 이용에 대한 의견이나 바라는 점을 남겨주세요!</p>
+<form id="feedbackForm" class="space-y-4">
+<div>
+<input type="text" id="writerName" placeholder="작성자 이름" required class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-3 text-body-sm text-on-surface focus:ring-1 focus:ring-primary">
+</div>
+<div>
+<textarea id="feedbackContent" rows="3" placeholder="의견을 자유롭게 작성해주세요..." required class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-3 text-body-sm text-on-surface focus:ring-1 focus:ring-primary"></textarea>
+</div>
+<button type="submit" class="w-full bg-primary text-on-primary font-semibold py-3 rounded-lg text-sm hover:opacity-90 transition-all">의견 남기기</button>
+</form>
+<div id="feedbackList" class="mt-6 space-y-3">
+<!-- 실시간 게시판 리스트가 들어오는 공간 -->
+</div>
+</section>
+</main>
+
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-xl bg-surface-container border-t border-outline-variant shadow-2xl flex justify-around items-center h-20 pb-safe px-2">
+<!-- Home (Active) -->
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-5 py-1.5 transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="text-[10px] font-bold mt-1">홈</span>
+</a>
+<!-- Courses -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="text-[10px] font-bold mt-1">내 강의</span>
+</a>
+<!-- AI Recommendations -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">auto_awesome</span>
+<span class="text-[10px] font-bold mt-1">AI 추천</span>
+</a>
+<!-- Profile -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-bold mt-1">프로필</span>
+</a>
+</nav>
+
+<!-- Firebase SDK 및 연동 스크립트 -->
+<script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCXrKi4aRxokPSIaflsZFcuWDrHo5rdFnQ",
+            authDomain: "lecture-a7915.firebaseapp.com",
+            projectId: "lecture-a7915",
+            storageBucket: "lecture-a7915.firebasestorage.app",
+            messagingSenderId: "235676860540",
+            appId: "1:235676860540:web:1ed3d95d0b3b519dc6c9f9"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const form = document.getElementById('feedbackForm');
+        const feedbackList = document.getElementById('feedbackList');
+
+        // 게시글 목록 불러오기
+        async function loadFeedbacks() {
+            feedbackList.innerHTML = '<p class="text-xs text-outline text-center py-2">의견을 불러오는 중...</p>';
+            try {
+                const q = query(collection(db, "feedbacks"));
+                const querySnapshot = await getDocs(q);
+                feedbackList.innerHTML = '';
+                
+                if(querySnapshot.empty) {
+                    feedbackList.innerHTML = '<p class="text-xs text-outline text-center py-2">아직 등록된 의견이 없습니다. 첫 의견을 남겨주세요!</p>';
+                    return;
+                }
+
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const item = document.createElement('div');
+                    item.className = 'bg-surface-container-low p-3 rounded-lg border border-outline-variant';
+                    item.innerHTML = `
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-xs font-bold text-primary">${data.name || '익명'}</span>
+                            <span class="text-[10px] text-outline">${data.createdAt ? new Date(data.createdAt.toDate()).toLocaleDateString() : '방금 전'}</span>
+                        </div>
+                        <p class="text-xs text-on-surface">${data.content}</p>
+                    `;
+                    feedbackList.appendChild(item);
+                });
+            } catch (e) {
+                console.error("Error loading documents: ", e);
+                feedbackList.innerHTML = '<p class="text-xs text-error text-center py-2">의견을 불러오지 못했습니다.</p>';
+            }
+        }
+
+        // 의견 작성 이벤트
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('writerName').value;
+            const content = document.getElementById('feedbackContent').value;
+
+            try {
+                await addDoc(collection(db, "feedbacks"), {
+                    name: name,
+                    content: content,
+                    createdAt: serverTimestamp()
+                });
+                document.getElementById('writerName').value = '';
+                document.getElementById('feedbackContent').value = '';
+                loadFeedbacks();
+            } catch (e) {
+                console.error("Error adding document: ", e);
+                alert("의견 등록에 실패했습니다.");
+            }
+        });
+
+        // 페이지 로드 시 목록 조회
+        loadFeedbacks();
+    </script>
+
+<script>
+        // Scroll interaction for header
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 20) {
+                header.classList.add('bg-surface-dim', 'shadow-xl');
+                header.classList.remove('bg-surface-container');
+            } else {
+                header.classList.remove('bg-surface-dim', 'shadow-xl');
+                header.classList.add('bg-surface-container');
+            }
+        });
+
+        // Search input focus effect
+        const searchInput = document.querySelector('input');
+        if(searchInput) {
+            searchInput.addEventListener('focus', () => {
+                document.querySelector('.ai-glow').classList.add('ring-1', 'ring-primary/50', 'border-primary/50');
+            });
+            searchInput.addEventListener('blur', () => {
+                document.querySelector('.ai-glow').classList.remove('ring-1', 'ring-primary/50', 'border-primary/50');
+            });
+        }
+    </script>
+</body>
+</html>
