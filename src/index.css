@@ -1,63 +1,40 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
+/* EduAI Platform Clean CSS */
 :root {
-  --color-surface: #10131b;
-  --color-surface-dim: #10131b;
-  --color-surface-bright: #363941;
-  --color-surface-container-lowest: #0b0e15;
-  --color-surface-container-low: #191b23;
-  --color-surface-container: #1d1f27;
-  --color-surface-container-high: #272a32;
-  --color-surface-container-highest: #32353d;
-  --color-on-surface: #e1e2ed;
-  --color-on-surface-variant: #c2c6d7;
-  --color-inverse-surface: #e1e2ed;
-  --color-inverse-on-surface: #2d3039;
-  --color-outline: #8c90a0;
-  --color-outline-variant: #424754;
-  --color-surface-tint: #afc6ff;
-  --color-primary: #afc6ff;
-  --color-on-primary: #002d6d;
-  --color-primary-container: #528dff;
-  --color-on-primary-container: #00275f;
-  --color-inverse-primary: #0059c7;
-  --color-secondary: #d4bbff;
-  --color-on-secondary: #3e1975;
-  --color-secondary-container: #55338d;
-  --color-on-secondary-container: #c6a5ff;
-  --color-tertiary: #ffb68f;
-  --color-on-tertiary: #542100;
-  --color-tertiary-container: #e96c16;
-  --color-on-tertiary-container: #ffffff;
-  --color-error: #ffb4ab;
-  --color-on-error: #690005;
-  --color-error-container: #93000a;
-  --color-on-error-container: #rffdab;
+  --bg-surface: #10131b;
+  --surface-container: #1d1f27;
+  --surface-container-high: #272a32;
+  --text-main: #e1e2ed;
+  --text-muted: #c2c6d7;
+  --primary: #afc6ff;
+  --primary-dark: #002d6d;
+  --border-color: #334155;
 }
 
 body {
-  background-color: var(--color-surface);
-  color: var(--color-on-surface);
-  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-surface);
+  color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Custom scrollbar and utilities for dark theme */
+* {
+  box-sizing: border-box;
+}
+
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--color-surface-container-low);
+  background: #191b23;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-outline-variant);
+  background: #424754;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-outline);
+  background: #8c90a0;
 }
