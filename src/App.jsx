@@ -21,6 +21,12 @@ export default function App() {
         body: JSON.stringify({ subject }),
       });
 
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await response.text();
+        throw new Error(`서버 응답 오류 (HTML 또는 텍스트 반환됨): ${text.slice(0, 100)}...`);
+      }
+
       const data = await response.json();
 
       if (!response.ok) {
@@ -172,6 +178,7 @@ const styles = {
     textAlign: 'center',
     marginBottom: '20px',
     fontWeight: '500',
+    wordBreak: 'break-all',
   },
   loadingContainer: {
     textAlign: 'center',
