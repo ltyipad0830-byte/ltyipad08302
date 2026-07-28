@@ -1,35 +1,16 @@
 {
-  "name": "eduai-platform",
-  "version": "1.0.0",
-  "private": true,
+  "name": "exam-lec-finder",
+  "version": "2.1.0",
+  "description": "대규모 인강 추천 및 강의별 상세 설명·추천 대상 맞춤형 플랫폼",
   "dependencies": {
-    "firebase": "^10.8.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "@google/generative-ai": "^0.21.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
+  "devDependencies": {
     "react-scripts": "5.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "build": "react-scripts build"
   }
 }
