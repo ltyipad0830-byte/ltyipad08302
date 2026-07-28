@@ -78,7 +78,7 @@ export default function App() {
 
         {loading && (
           <div style={styles.loadingContainer}>
-            <p style={styles.loadingText}>AI가 22개정 교육과정에 맞는 인강 목록을 수집하고 있습니다...</p>
+            <p style={styles.loadingText}>Crawl4AI 수집 데이터 기반 Gemini가 분류 중입니다...</p>
           </div>
         )}
 

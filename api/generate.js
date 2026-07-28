@@ -1,6 +1,6 @@
-import { GoogleGenAI } from "@google/genai";
+const { GoogleGenAI } = require("@google/genai");
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -30,7 +30,7 @@ export default async function handler(req, res) {
     `;
 
     const response = await ai.models.generateContent({
-      model: 'gemini-3.1-flash-lite',
+      model: 'gemini-2.5-flash',
       contents: prompt,
     });
 
@@ -44,4 +44,4 @@ export default async function handler(req, res) {
     console.error('Gemini API Error:', error);
     return res.status(500).json({ error: '인강 정보를 불러오는 중 오류가 발생했습니다.' });
   }
-}
+};
