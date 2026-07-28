@@ -1,6 +1,19 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 module.exports = async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  );
+
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -11,19 +24,22 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: '과목명을 입력해주세요.' });
   }
 
-  try {
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      return res.status(500).json({ error: 'GEMINI_API_KEY 환경 변수가 설정되지 않았습니다.' });
-    }
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    return res.status(500).json({ 
+      error: 'GEMINI_API_KEY 환경 변수가 설정되지 않았습니다.' 
+    });
+  }
 
+  try {
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
+    // 문법 오류를 일으키던 백틱 문구를 일반 텍스트로 안전하게 수정
     const prompt = `
       22개정 교육과정에 맞춰 학생들이 "${subject}" 과목의 인강을 찾고 있습니다.
       메가스터디, 대성마이맥, EBS, 시대인재 등의 주요 사이트에 개설될 법한 해당 과목의 대표적인 인강 정보(사이트명, 강사명, 강의명, 특징)를 사이트별로 골고루 3~4개 정도 추천해 주세요.
-      반드시 아래의 JSON 배열 형식으로만 반환해 주세요. 다른 설명이나 텍스트는 절대 포함하지 마세요. (마크다운 백틱 ```json 등도 제외)
+      반드시 아래의 JSON 배열 형식으로만 반환해 주세요. 다른 설명이나 마크다운 서식은 절대 포함하지 마세요.
       
       [
         {
@@ -37,13 +53,15 @@ module.exports = async function handler(req, res) {
 
     const result = await model.generateContent(prompt);
     let textResponse = result.response.text().trim();
-    textResponse = textResponse.replace(/^```json\s*/, "").replace(/^```\s*/, "").replace(/\s*```$/, "");
+    
+    // 혹시 모를 백틱 포함 응답 제거 안전장치
+    textResponse = textResponse.replace(/```json/g, "").replace(/```/g, "").trim();
 
     const data = JSON.parse(textResponse);
     return res.status(200).json({ results: data });
 
   } catch (error) {
-    console.error('Gemini API Error:', error);
-    return res.status(500).json({ error: '서버 내부 오류 발생: ' + error.message });
+    console.error('Gemini API Error Details:', error);
+    return res.status(500).json({ error: '서버 내부 처리 오류: ' + error.message });
   }
 };
