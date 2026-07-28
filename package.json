@@ -1,7 +1,7 @@
 {
   "name": "exam-lec-finder",
-  "version": "1.7.0",
-  "description": "22개정 교육과정 다중 강사 및 정밀 도서/후기 상세 링크 플랫폼",
+  "version": "2.0.0",
+  "description": "22개정 교육과정 대규모 다중 강사 및 풍부한 인강 추천 전용 플랫폼 (링크/후기 제거)",
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
     "react": "18.2.0",

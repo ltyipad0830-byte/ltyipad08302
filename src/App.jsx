@@ -72,22 +72,22 @@ export default function App() {
     <div style={styles.page}>
       <div style={styles.container}>
         <header style={styles.header}>
-          <span style={styles.badgeTop}>✨ 22개정 교육과정 다중 강사 및 정밀 연동 플랫폼</span>
-          <h1 style={styles.title}>사이트별 복수 강사 & 난이도별 인강 전면 비교</h1>
-          <p style={styles.subtitle}>사이트마다 여러 강사진과 다양한 난이도별 강좌, 실제 도서 상세 구매처 및 수강 후기 직링크 연동</p>
+          <span style={styles.badgeTop}>✨ 22개정 대규모 인강 및 시중 교재 추천 아카이브</span>
+          <h1 style={styles.title}>사이트별 모든 강사진 & 풍부한 다중 인강 추천</h1>
+          <p style={styles.subtitle}>메가스터디, 대성마이맥, EBS 등 모든 강사진의 수십 개에 달하는 심도 있는 인강 및 시중 교재 추천 비교</p>
         </header>
 
         <form onSubmit={handleSearch} style={styles.formContainer}>
           <div style={styles.inputWrapper}>
             <input
               type="text"
-              placeholder="예: 공통수학2, 미적분, 수학(상) 등 입력"
+              placeholder="예: 미적분, 공통수학2, 수학(상) 등 입력"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               style={styles.input}
             />
             <button type="submit" disabled={loading} style={styles.button}>
-              {loading ? '⏳ 다중 강사 분석 중...' : '전체 강사 조회'}
+              {loading ? '⏳ 대규모 강사진 수집 중...' : '전체 강사 및 인강 조회'}
             </button>
           </div>
         </form>
@@ -96,7 +96,7 @@ export default function App() {
 
         {loading && (
           <div style={styles.loadingContainer}>
-            <p style={styles.loadingText}>각 사이트별 여러 강사진과 난이도별 인강, 정밀 도서 상세 페이지를 수집 중입니다...</p>
+            <p style={styles.loadingText}>모든 사이트의 수많은 강사진과 수십 개에 이르는 난이도별 인강 리스트를 정밀 분석 중입니다...</p>
           </div>
         )}
 
@@ -111,10 +111,10 @@ export default function App() {
                 <span style={getSiteBadgeStyle(group.site)}>{group.site}</span>
                 <span style={styles.instructorTag}>{group.instructor} 강사</span>
               </div>
-              <h3 style={styles.lectureTitle}>{group.instructor} 강사 ({group.lectures.length}개 강좌)</h3>
-              <p style={styles.feature}>{group.mainFeature || '난이도별 맞춤형 커리큘럼 및 전용 교재 완비'}</p>
+              <h3 style={styles.lectureTitle}>{group.instructor} 강사의 개설 인강 ({group.lectures.length}개)</h3>
+              <p style={styles.feature}>{group.mainFeature || '다양한 난이도별 맞춤형 커리큘럼 제공'}</p>
               <div style={styles.cardFooter}>
-                <span style={styles.detailClickHint}>🔍 모든 강좌 & 교재 & 후기 보기</span>
+                <span style={styles.detailClickHint}>🔍 모든 강좌 & 시중 교재 리스트 보기</span>
               </div>
             </div>
           ))}
@@ -129,25 +129,17 @@ export default function App() {
                 <button style={styles.closeButton} onClick={() => setSelectedInstructorGroup(null)}>✕</button>
               </div>
               
-              <h2 style={styles.modalTitle}>{selectedInstructorGroup.instructor} 강사 통합 정보</h2>
-              <p style={styles.modalInstructor}>소속 플랫폼: <strong>{selectedInstructorGroup.site}</strong></p>
+              <h2 style={styles.modalTitle}>{selectedInstructorGroup.instructor} 강사 추천 인강 목록</h2>
+              <p style={styles.modalInstructor}>소속 플랫폼: <strong>{selectedInstructorGroup.site}</strong> | 총 추천 강좌 수: <strong>{selectedInstructorGroup.lectures.length}개</strong></p>
 
-              {/* 1. 해당 강사의 모든 인강 목록 및 난이도별 커리큘럼 */}
+              {/* 1. 해당 강사의 대규모 난이도별 여러 인강 목록 (링크 없음) */}
               <div style={styles.sectionBox}>
-                <h4 style={styles.sectionHeading}>📚 난이도별 개설된 전체 인강 목록</h4>
+                <h4 style={styles.sectionHeading}>📚 추천 인강 리스트 ({selectedInstructorGroup.lectures.length}개)</h4>
                 <div style={styles.lecturesListContainer}>
                   {selectedInstructorGroup.lectures.map((lec, lIdx) => (
                     <div key={lIdx} style={styles.lectureItemBox}>
                       <div style={styles.lecItemTop}>
                         <h5 style={styles.lecItemTitle}>[{lec.level || '일반'}] {lec.title}</h5>
-                        <a 
-                          href={lec.lectureUrl} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          style={styles.lecDirectLinkBtn}
-                        >
-                          강의 바로가기 ↗
-                        </a>
                       </div>
                       <p style={styles.lecItemDesc}>{lec.description}</p>
                     </div>
@@ -155,45 +147,17 @@ export default function App() {
                 </div>
               </div>
 
-              {/* 2. 실제 시중 교재 사진 및 상세 구매처 */}
+              {/* 2. 시중 교재 추천 리스트 (사진 없음, 링크 없음) */}
               <div style={styles.sectionBox}>
-                <h4 style={styles.sectionHeading}>📖 추천 시중 교재 (상세 구매처 연동)</h4>
+                <h4 style={styles.sectionHeading}>📖 추천 시중 교재 리스트 (쎈, 블랙라벨, 개념원리 등)</h4>
                 <div style={styles.booksGrid}>
                   {selectedInstructorGroup.recommendedBooks && selectedInstructorGroup.recommendedBooks.map((book, bIdx) => (
-                    <div key={bIdx} style={styles.bookCard}>
-                      <img 
-                        src={book.imageUrl} 
-                        alt={book.name} 
-                        style={styles.bookImage}
-                        onError={(e) => { e.target.src = 'https://image.yes24.com/goods/167508612/L'; }}
-                      />
-                      <div style={styles.bookInfo}>
-                        <div style={styles.bookTitleRow}>
-                          <p style={styles.bookName}><strong>{book.name}</strong></p>
-                          <a href={book.bookStoreUrl} target="_blank" rel="noopener noreferrer" style={styles.bookStoreLink}>교재 상세 구매처 ↗</a>
-                        </div>
-                        <p style={styles.bookReason}>{book.reason}</p>
+                    <div key={bIdx} style={styles.bookCardTextOnly}>
+                      <div style={styles.bookTitleRow}>
+                        <p style={styles.bookName}><strong>{book.name}</strong></p>
                       </div>
+                      <p style={styles.bookReason}>{book.reason}</p>
                     </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* 3. 실제 수강 후기 모음 링크 */}
-              <div style={styles.sectionBox}>
-                <h4 style={styles.sectionHeading}>⭐ 수강생 생생 후기</h4>
-                <p style={styles.reviewSubText}>해당 강사 및 강좌들에 대한 수강생들의 실제 평점과 합격 후기를 직접 확인할 수 있습니다.</p>
-                <div style={styles.reviewLinksContainer}>
-                  {selectedInstructorGroup.reviewLinks && selectedInstructorGroup.reviewLinks.map((rev, rIdx) => (
-                    <a 
-                      key={rIdx} 
-                      href={rev.url} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      style={styles.reviewLinkBadge}
-                    >
-                      💬 {rev.platformName} ↗
-                    </a>
                   ))}
                 </div>
               </div>
@@ -416,25 +380,13 @@ const styles = {
     border: '1px solid #cbd5e1',
   },
   lecItemTop: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '6px',
+    marginBottom: '4px',
   },
   lecItemTitle: {
     fontSize: '15px',
     fontWeight: '700',
     color: '#0f172a',
     margin: 0,
-  },
-  lecDirectLinkBtn: {
-    fontSize: '12px',
-    backgroundColor: '#eff6ff',
-    color: '#2563eb',
-    padding: '4px 10px',
-    borderRadius: '6px',
-    textDecoration: 'none',
-    fontWeight: '600',
   },
   lecItemDesc: {
     fontSize: '13px',
@@ -445,32 +397,15 @@ const styles = {
   booksGrid: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '12px',
+    gap: '10px',
   },
-  bookCard: {
-    display: 'flex',
-    gap: '14px',
+  bookCardTextOnly: {
     backgroundColor: '#fff',
-    padding: '12px',
+    padding: '12px 14px',
     borderRadius: '10px',
     border: '1px solid #cbd5e1',
-    alignItems: 'center',
-  },
-  bookImage: {
-    width: '65px',
-    height: '90px',
-    objectFit: 'cover',
-    borderRadius: '6px',
-    backgroundColor: '#e2e8f0',
-    flexShrink: 0,
-  },
-  bookInfo: {
-    flex: 1,
   },
   bookTitleRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     marginBottom: '4px',
   },
   bookName: {
@@ -478,37 +413,10 @@ const styles = {
     color: '#0f172a',
     margin: 0,
   },
-  bookStoreLink: {
-    fontSize: '11px',
-    color: '#0284c7',
-    textDecoration: 'none',
-    fontWeight: '600',
-  },
   bookReason: {
     fontSize: '13px',
     color: '#64748b',
-    margin: '0',
+    margin: 0,
     lineHeight: '1.4',
-  },
-  reviewSubText: {
-    fontSize: '13px',
-    color: '#64748b',
-    margin: '0 0 10px 0',
-  },
-  reviewLinksContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '8px',
-  },
-  reviewLinkBadge: {
-    display: 'inline-block',
-    backgroundColor: '#ecfdf5',
-    color: '#059669',
-    padding: '10px 14px',
-    borderRadius: '8px',
-    textDecoration: 'none',
-    fontWeight: '600',
-    fontSize: '13px',
-    border: '1px solid #a7f3d0',
   },
 };
