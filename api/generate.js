@@ -31,25 +31,27 @@ module.exports = async function handler(req, res) {
     });
   }
 
-  const modelsToTry = ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro", "gemini-flash"];
+  // 사용자가 요청한 gemini-3.1-flash-lite를 우선 시도하고, 필요시 폴백 적용
+  const modelsToTry = ["gemini-3.1-flash-lite", "gemini-1.5-flash", "gemini-2.0-flash"];
   let lastError = null;
 
   const genAI = new GoogleGenerativeAI(apiKey);
 
   const prompt = `
     22개정 교육과정에 맞춰 학생들이 "${subject}" 과목의 인강을 찾고 있습니다.
-    메가스터디, 대성마이맥, EBS, 시대인재 등의 주요 사이트에 개설될 법한 해당 과목의 대표적인 인강 정보 3~4개를 추천해 주세요.
-    각 인강마다 아래 필드를 반드시 포함하는 JSON 배열 형식으로만 응답해 주세요. 다른 설명이나 마크다운 서식(```json 등)은 절대 포함하지 마세요.
+    메가스터디, 대성마이맥, EBS, 시대인재 등의 주요 사이트에 개설될 법한 해당 과목의 대표적인 인강 정보 4개를 추천해 주세요.
+    반드시 아래의 JSON 배열 형식으로만 반환해 주세요. 다른 설명이나 마크다운 서식은 절대 포함하지 마세요.
     
     [
       {
         "site": "메가스터디",
         "instructor": "강사명",
         "title": "강의 제목",
-        "feature": "강의 특징 요약 (카드에 표시될 짧은 문구)",
-        "description": "강의에 대한 상세한 설명 및 커리큘럼 안내",
-        "recommendedBook": "함께 풀면 좋은 추천 시중교재 이름 및 활용 팁",
-        "link": "https://www.megastudy.net"
+        "feature": "핵심 특징 요약 (카드에 표시될 짧은 텍스트)",
+        "description": "해당 강의에 대한 상세한 설명과 커리큘럼 안내",
+        "link": "https://www.megastudy.net",
+        "recommendedBook": "함께 풀면 좋은 시중 교재 이름 (예: 쎈 수학, 1등급 수학 등)",
+        "bookReason": "이 교재를 함께 풀면 좋은 이유 및 연계 학습법"
       }
     ]
   `;
@@ -70,6 +72,6 @@ module.exports = async function handler(req, res) {
   }
 
   return res.status(500).json({ 
-    error: '모든 Gemini 모델 호출에 실패했습니다. 상세 오류: ' + (lastError ? lastError.message : '알 수 없는 오류') 
+    error: 'Gemini 모델 호출 중 오류가 발생했습니다. 상세 오류: ' + (lastError ? lastError.message : '알 수 없는 오류') 
   });
 };

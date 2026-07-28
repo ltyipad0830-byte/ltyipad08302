@@ -5,7 +5,7 @@ export default function App() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [selectedLecture, setSelectedLecture] = useState(null); // 모달용 선택된 강의
+  const [selectedLecture, setSelectedLecture] = useState(null);
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -14,6 +14,7 @@ export default function App() {
     setLoading(true);
     setError('');
     setResults([]);
+    setSelectedLecture(null);
 
     try {
       const response = await fetch('/api/generate', {
@@ -62,8 +63,8 @@ export default function App() {
       <div style={styles.container}>
         <header style={styles.header}>
           <span style={styles.badgeTop}>✨ 22개정 교육과정 맞춤</span>
-          <h1 style={styles.title}>인강 & 연계 시중교재 통합 비교 플랫폼</h1>
-          <p style={styles.subtitle}>원하는 인강을 클릭하여 상세 설명, 강의 링크, 추천 교재를 확인하세요</p>
+          <h1 style={styles.title}>인강 및 추천 교재 통합 플랫폼</h1>
+          <p style={styles.subtitle}>인강 상세 정보와 함께 풀면 좋은 시중 교재를 한눈에 확인하세요</p>
         </header>
 
         <form onSubmit={handleSearch} style={styles.formContainer}>
@@ -76,7 +77,7 @@ export default function App() {
               style={styles.input}
             />
             <button type="submit" disabled={loading} style={styles.button}>
-              {loading ? '⏳ 분석 중...' : '인강 찾기'}
+              {loading ? '⏳ 분석 중...' : '통합 검색'}
             </button>
           </div>
         </form>
@@ -85,7 +86,7 @@ export default function App() {
 
         {loading && (
           <div style={styles.loadingContainer}>
-            <p style={styles.loadingText}>Gemini가 최적의 인강과 시중교재를 분석 중입니다...</p>
+            <p style={styles.loadingText}>Gemini-3.1-Flash-Lite가 인강 및 최적 교재 정보를 분석 중입니다...</p>
           </div>
         )}
 
@@ -93,7 +94,10 @@ export default function App() {
           {results.map((item, index) => (
             <div 
               key={index} 
-              style={styles.card}
+              style={{
+                ...styles.card, 
+                borderColor: selectedLecture === item ? '#0066ff' : 'rgba(255,255,255,0.8)'
+              }}
               onClick={() => setSelectedLecture(item)}
             >
               <div style={styles.cardHeader}>
@@ -103,13 +107,13 @@ export default function App() {
               <h3 style={styles.lectureTitle}>{item.title}</h3>
               <p style={styles.feature}>{item.feature}</p>
               <div style={styles.cardFooter}>
-                <span style={styles.detailLinkText}>📖 상세 설명 및 교재 보기 &rarr;</span>
+                <span style={styles.detailClickHint}>👉 클릭하여 상세 정보 & 추천 교재 보기</span>
               </div>
             </div>
           ))}
         </div>
 
-        {/* 상세 정보 모달 */}
+        {/* 상세 모달 또는 상세 패널 영역 */}
         {selectedLecture && (
           <div style={styles.modalOverlay} onClick={() => setSelectedLecture(null)}>
             <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
@@ -117,27 +121,31 @@ export default function App() {
                 <span style={getSiteBadgeStyle(selectedLecture.site)}>{selectedLecture.site}</span>
                 <button style={styles.closeButton} onClick={() => setSelectedLecture(null)}>✕</button>
               </div>
-              <h2 style={styles.modalTitle}>{selectedLecture.title}</h2>
-              <p style={styles.modalInstructor}><strong>담당 강사:</strong> {selectedLecture.instructor}</p>
               
+              <h2 style={styles.modalTitle}>{selectedLecture.title}</h2>
+              <p style={styles.modalInstructor}>진행 강사: <strong>{selectedLecture.instructor}</strong></p>
+
               <div style={styles.sectionBox}>
-                <h4 style={styles.sectionHeading}>📝 강의 상세 설명</h4>
+                <h4 style={styles.sectionHeading}>📖 강의 상세 설명</h4>
                 <p style={styles.sectionText}>{selectedLecture.description || selectedLecture.feature}</p>
               </div>
 
               <div style={styles.sectionBox}>
-                <h4 style={styles.sectionHeading}>📚 함께 풀면 좋은 추천 시중교재</h4>
-                <p style={styles.bookText}>{selectedLecture.recommendedBook || "이 강의와 병행하기 좋은 연계 교재 정보가 준비되어 있습니다."}</p>
+                <h4 style={styles.sectionHeading}>📚 함께 풀면 좋은 시중 교재 추천</h4>
+                <div style={styles.bookCard}>
+                  <p style={styles.bookName}>📌 <strong>{selectedLecture.recommendedBook}</strong></p>
+                  <p style={styles.bookReason}>{selectedLecture.bookReason}</p>
+                </div>
               </div>
 
               <div style={styles.linkBox}>
                 <a 
-                  href={selectedLecture.link || "https://www.google.com/search?q=" + encodeURIComponent(selectedLecture.site + " " + selectedLecture.instructor + " " + selectedLecture.title)} 
+                  href={selectedLecture.link || '#'} 
                   target="_blank" 
-                  rel="noopener noreferrer"
-                  style={styles.externalLinkButton}
+                  rel="noopener noreferrer" 
+                  style={styles.linkButton}
                 >
-                  🔗 인강 사이트 바로가기
+                  🔗 인강 사이트로 이동하기
                 </a>
               </div>
             </div>
@@ -237,7 +245,7 @@ const styles = {
   },
   card: {
     backgroundColor: '#ffffff',
-    border: '1px solid rgba(255,255,255,0.8)',
+    border: '2px solid transparent',
     borderRadius: '16px',
     padding: '24px',
     boxShadow: '0 6px 16px rgba(0,0,0,0.04)',
@@ -245,7 +253,7 @@ const styles = {
     flexDirection: 'column',
     justifyContent: 'space-between',
     cursor: 'pointer',
-    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+    transition: 'all 0.2s ease',
   },
   cardHeader: {
     display: 'flex',
@@ -274,17 +282,18 @@ const styles = {
   feature: {
     fontSize: '14px',
     color: '#666',
-    margin: '0 0 16px 0',
+    margin: '0 0 15px 0',
     lineHeight: '1.5',
   },
   cardFooter: {
     borderTop: '1px solid #f0f0f0',
     paddingTop: '12px',
+    textAlign: 'right',
   },
-  detailLinkText: {
+  detailClickHint: {
     fontSize: '13px',
-    fontWeight: '600',
     color: '#0066ff',
+    fontWeight: '600',
   },
   modalOverlay: {
     position: 'fixed',
@@ -292,7 +301,7 @@ const styles = {
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -300,13 +309,12 @@ const styles = {
     padding: '20px',
   },
   modalContent: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#fff',
     borderRadius: '20px',
-    maxWidth: '550px',
+    maxWidth: '600px',
     width: '100%',
     padding: '30px',
     boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
-    position: 'relative',
     maxHeight: '90vh',
     overflowY: 'auto',
   },
@@ -327,7 +335,7 @@ const styles = {
     fontSize: '22px',
     fontWeight: '800',
     color: '#111',
-    margin: '0 0 10px 0',
+    margin: '0 0 8px 0',
   },
   modalInstructor: {
     fontSize: '15px',
@@ -350,31 +358,39 @@ const styles = {
   sectionText: {
     fontSize: '14px',
     color: '#475569',
-    margin: 0,
     lineHeight: '1.6',
+    margin: 0,
   },
-  bookText: {
+  bookCard: {
+    backgroundColor: '#fff',
+    padding: '12px',
+    borderRadius: '8px',
+    border: '1px solid #cbd5e1',
+  },
+  bookName: {
     fontSize: '14px',
-    color: '#0f766e',
-    fontWeight: '600',
+    color: '#0f172a',
+    margin: '0 0 6px 0',
+  },
+  bookReason: {
+    fontSize: '13px',
+    color: '#64748b',
     margin: 0,
-    lineHeight: '1.6',
+    lineHeight: '1.5',
   },
   linkBox: {
-    marginTop: '20px',
     textAlign: 'center',
+    marginTop: '20px',
   },
-  externalLinkButton: {
+  linkButton: {
     display: 'inline-block',
-    width: '100%',
-    padding: '14px',
     backgroundColor: '#0066ff',
     color: '#fff',
+    padding: '14px 28px',
     borderRadius: '12px',
     textDecoration: 'none',
     fontWeight: '700',
-    fontSize: '16px',
-    textAlign: 'center',
-    boxShadow: '0 4px 12px rgba(0,102,255,0.3)',
+    fontSize: '15px',
+    boxShadow: '0 4px 12px rgba(0, 102, 255, 0.3)',
   },
 };
