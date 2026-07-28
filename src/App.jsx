@@ -7,7 +7,6 @@ export default function App() {
   const [error, setError] = useState('');
   const [selectedInstructorGroup, setSelectedInstructorGroup] = useState(null);
 
-  // 로컬 캐시를 두어 동일 과목 재검색 시 결과가 바뀌지 않고 일관되게 유지되도록 함
   const [cache, setCache] = useState({});
 
   const handleSearch = async (e) => {
@@ -17,7 +16,6 @@ export default function App() {
 
     setSelectedInstructorGroup(null);
 
-    // 이미 검색했던 과목이면 캐시된 데이터를 그대로 사용하여 일관성 유지
     if (cache[trimmedSubject]) {
       setResults(cache[trimmedSubject]);
       return;
@@ -46,7 +44,6 @@ export default function App() {
         throw new Error(data.error || '데이터를 가져오지 못했습니다.');
       }
 
-      // 캐시에 저장
       setCache(prev => ({ ...prev, [trimmedSubject]: data.results }));
       setResults(data.results);
     } catch (err) {
@@ -75,22 +72,22 @@ export default function App() {
     <div style={styles.page}>
       <div style={styles.container}>
         <header style={styles.header}>
-          <span style={styles.badgeTop}>✨ 22개정 교육과정 정밀 비교</span>
-          <h1 style={styles.title}>인강 전면 비교 & 교재/후기 플랫폼</h1>
-          <p style={styles.subtitle}>검색 결과 일관성 유지, 공식 플랫폼 링크 및 공인된 교재 표지 연동</p>
+          <span style={styles.badgeTop}>✨ 22개정 교육과정 정밀 비교 플랫폼</span>
+          <h1 style={styles.title}>인강 전면 비교 & 교재/후기 통합 서비스</h1>
+          <p style={styles.subtitle}>검색 결과 연동형 상세 페이지, 실제 도서 표지 및 수강 후기 다이렉트 연결</p>
         </header>
 
         <form onSubmit={handleSearch} style={styles.formContainer}>
           <div style={styles.inputWrapper}>
             <input
               type="text"
-              placeholder="예: 수학(상), 공통국어1, 지구과학 등 입력"
+              placeholder="예: 미적분, 수학(상), 공통국어1 등 입력"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               style={styles.input}
             />
             <button type="submit" disabled={loading} style={styles.button}>
-              {loading ? '⏳ 분석 중...' : '전체 인강 조회'}
+              {loading ? '⏳ 정밀 수집 중...' : '전체 인강 조회'}
             </button>
           </div>
         </form>
@@ -99,7 +96,7 @@ export default function App() {
 
         {loading && (
           <div style={styles.loadingContainer}>
-            <p style={styles.loadingText}>Gemini가 정확하고 일관된 강사별 인강 및 교재 정보를 불러오는 중입니다...</p>
+            <p style={styles.loadingText}>모든 사이트의 강사별 인강 검색 링크, 교재 표지 및 후기 화면을 매칭 중입니다...</p>
           </div>
         )}
 
@@ -149,7 +146,7 @@ export default function App() {
                           rel="noopener noreferrer" 
                           style={styles.lecDirectLinkBtn}
                         >
-                          공식 강의실 바로가기 ↗
+                          강의 검색 결과 바로가기 ↗
                         </a>
                       </div>
                       <p style={styles.lecItemDesc}>{lec.description}</p>
@@ -158,9 +155,9 @@ export default function App() {
                 </div>
               </div>
 
-              {/* 2. 실제 시중 교재 사진 및 추천 이유 */}
+              {/* 2. 실제 시중 교재 사진 및 구매처 */}
               <div style={styles.sectionBox}>
-                <h4 style={styles.sectionHeading}>📖 추천 시중 교재 (정밀 매칭)</h4>
+                <h4 style={styles.sectionHeading}>📖 추천 시중 교재 (정밀 매칭 및 실제 표지)</h4>
                 <div style={styles.booksGrid}>
                   {selectedInstructorGroup.recommendedBooks && selectedInstructorGroup.recommendedBooks.map((book, bIdx) => (
                     <div key={bIdx} style={styles.bookCard}>
@@ -168,12 +165,12 @@ export default function App() {
                         src={book.imageUrl} 
                         alt={book.name} 
                         style={styles.bookImage}
-                        onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1532012197267-da84d127e765?w=200'; }}
+                        onError={(e) => { e.target.src = 'https://image.yes24.com/goods/102345678/L'; }}
                       />
                       <div style={styles.bookInfo}>
                         <div style={styles.bookTitleRow}>
                           <p style={styles.bookName}><strong>{book.name}</strong></p>
-                          <a href={book.bookStoreUrl} target="_blank" rel="noopener noreferrer" style={styles.bookStoreLink}>교재 구매처 ↗</a>
+                          <a href={book.bookStoreUrl} target="_blank" rel="noopener noreferrer" style={styles.bookStoreLink}>교재 상세 구매처 ↗</a>
                         </div>
                         <p style={styles.bookReason}>{book.reason}</p>
                       </div>
@@ -185,7 +182,7 @@ export default function App() {
               {/* 3. 실제 수강 후기 모음 링크 */}
               <div style={styles.sectionBox}>
                 <h4 style={styles.sectionHeading}>⭐ 수강생 생생 후기</h4>
-                <p style={styles.reviewSubText}>해당 강사 및 강좌들에 대한 수강생들의 실제 평점과 합격 후기를 확인할 수 있습니다.</p>
+                <p style={styles.reviewSubText}>해당 강사 및 강좌들에 대한 수강생들의 실제 평점과 합격 후기를 직접 확인할 수 있습니다.</p>
                 <div style={styles.reviewLinksContainer}>
                   {selectedInstructorGroup.reviewLinks && selectedInstructorGroup.reviewLinks.map((rev, rIdx) => (
                     <a 
@@ -195,7 +192,7 @@ export default function App() {
                       rel="noopener noreferrer" 
                       style={styles.reviewLinkBadge}
                     >
-                      💬 {rev.platformName} 수강 후기 보러가기 ↗
+                      💬 {rev.platformName} ↗
                     </a>
                   ))}
                 </div>
