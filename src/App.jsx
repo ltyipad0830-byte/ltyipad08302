@@ -5,6 +5,7 @@ export default function App() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [selectedLecture, setSelectedLecture] = useState(null); // 모달용 선택된 강의
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -61,8 +62,8 @@ export default function App() {
       <div style={styles.container}>
         <header style={styles.header}>
           <span style={styles.badgeTop}>✨ 22개정 교육과정 맞춤</span>
-          <h1 style={styles.title}>인강 통합 비교 플랫폼</h1>
-          <p style={styles.subtitle}>메가스터디, 대성마이맥, EBS, 시대인재 인강을 한눈에 비교하세요</p>
+          <h1 style={styles.title}>인강 & 연계 시중교재 통합 비교 플랫폼</h1>
+          <p style={styles.subtitle}>원하는 인강을 클릭하여 상세 설명, 강의 링크, 추천 교재를 확인하세요</p>
         </header>
 
         <form onSubmit={handleSearch} style={styles.formContainer}>
@@ -84,22 +85,64 @@ export default function App() {
 
         {loading && (
           <div style={styles.loadingContainer}>
-            <p style={styles.loadingText}>Crawl4AI 수집 데이터 기반 Gemini가 분류 중입니다...</p>
+            <p style={styles.loadingText}>Gemini가 최적의 인강과 시중교재를 분석 중입니다...</p>
           </div>
         )}
 
         <div style={styles.resultsGrid}>
           {results.map((item, index) => (
-            <div key={index} style={styles.card}>
+            <div 
+              key={index} 
+              style={styles.card}
+              onClick={() => setSelectedLecture(item)}
+            >
               <div style={styles.cardHeader}>
                 <span style={getSiteBadgeStyle(item.site)}>{item.site}</span>
                 <span style={styles.instructorTag}>{item.instructor} 강사</span>
               </div>
               <h3 style={styles.lectureTitle}>{item.title}</h3>
               <p style={styles.feature}>{item.feature}</p>
+              <div style={styles.cardFooter}>
+                <span style={styles.detailLinkText}>📖 상세 설명 및 교재 보기 &rarr;</span>
+              </div>
             </div>
           ))}
         </div>
+
+        {/* 상세 정보 모달 */}
+        {selectedLecture && (
+          <div style={styles.modalOverlay} onClick={() => setSelectedLecture(null)}>
+            <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+              <div style={styles.modalHeader}>
+                <span style={getSiteBadgeStyle(selectedLecture.site)}>{selectedLecture.site}</span>
+                <button style={styles.closeButton} onClick={() => setSelectedLecture(null)}>✕</button>
+              </div>
+              <h2 style={styles.modalTitle}>{selectedLecture.title}</h2>
+              <p style={styles.modalInstructor}><strong>담당 강사:</strong> {selectedLecture.instructor}</p>
+              
+              <div style={styles.sectionBox}>
+                <h4 style={styles.sectionHeading}>📝 강의 상세 설명</h4>
+                <p style={styles.sectionText}>{selectedLecture.description || selectedLecture.feature}</p>
+              </div>
+
+              <div style={styles.sectionBox}>
+                <h4 style={styles.sectionHeading}>📚 함께 풀면 좋은 추천 시중교재</h4>
+                <p style={styles.bookText}>{selectedLecture.recommendedBook || "이 강의와 병행하기 좋은 연계 교재 정보가 준비되어 있습니다."}</p>
+              </div>
+
+              <div style={styles.linkBox}>
+                <a 
+                  href={selectedLecture.link || "https://www.google.com/search?q=" + encodeURIComponent(selectedLecture.site + " " + selectedLecture.instructor + " " + selectedLecture.title)} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  style={styles.externalLinkButton}
+                >
+                  🔗 인강 사이트 바로가기
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -201,6 +244,8 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
+    cursor: 'pointer',
+    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
   },
   cardHeader: {
     display: 'flex',
@@ -229,7 +274,107 @@ const styles = {
   feature: {
     fontSize: '14px',
     color: '#666',
-    margin: '0',
+    margin: '0 0 16px 0',
     lineHeight: '1.5',
+  },
+  cardFooter: {
+    borderTop: '1px solid #f0f0f0',
+    paddingTop: '12px',
+  },
+  detailLinkText: {
+    fontSize: '13px',
+    fontWeight: '600',
+    color: '#0066ff',
+  },
+  modalOverlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+    padding: '20px',
+  },
+  modalContent: {
+    backgroundColor: '#ffffff',
+    borderRadius: '20px',
+    maxWidth: '550px',
+    width: '100%',
+    padding: '30px',
+    boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
+    position: 'relative',
+    maxHeight: '90vh',
+    overflowY: 'auto',
+  },
+  modalHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '15px',
+  },
+  closeButton: {
+    background: 'none',
+    border: 'none',
+    fontSize: '20px',
+    cursor: 'pointer',
+    color: '#888',
+  },
+  modalTitle: {
+    fontSize: '22px',
+    fontWeight: '800',
+    color: '#111',
+    margin: '0 0 10px 0',
+  },
+  modalInstructor: {
+    fontSize: '15px',
+    color: '#555',
+    marginBottom: '20px',
+  },
+  sectionBox: {
+    backgroundColor: '#f8fafc',
+    borderRadius: '12px',
+    padding: '16px',
+    marginBottom: '16px',
+    border: '1px solid #e2e8f0',
+  },
+  sectionHeading: {
+    fontSize: '15px',
+    fontWeight: '700',
+    color: '#1e293b',
+    margin: '0 0 8px 0',
+  },
+  sectionText: {
+    fontSize: '14px',
+    color: '#475569',
+    margin: 0,
+    lineHeight: '1.6',
+  },
+  bookText: {
+    fontSize: '14px',
+    color: '#0f766e',
+    fontWeight: '600',
+    margin: 0,
+    lineHeight: '1.6',
+  },
+  linkBox: {
+    marginTop: '20px',
+    textAlign: 'center',
+  },
+  externalLinkButton: {
+    display: 'inline-block',
+    width: '100%',
+    padding: '14px',
+    backgroundColor: '#0066ff',
+    color: '#fff',
+    borderRadius: '12px',
+    textDecoration: 'none',
+    fontWeight: '700',
+    fontSize: '16px',
+    textAlign: 'center',
+    boxShadow: '0 4px 12px rgba(0,102,255,0.3)',
   },
 };
