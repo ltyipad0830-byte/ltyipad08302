@@ -1,0 +1,27 @@
+/* EduAI Platform Styles based on stitch code and DESIGN.md */
+
+.ai-glow {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.ai-glow:focus-within {
+  box-shadow: 0 0 20px rgba(175, 198, 255, 0.15);
+}
+
+.card-container {
+  background-color: #1d1f27;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.card-container:hover {
+  border-color: #afc6ff;
+  transform: translateY(-2px);
+}
+
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+}

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './App.css';
 
 export default function App() {
   const [subject, setSubject] = useState('');
@@ -55,119 +56,162 @@ export default function App() {
     }
   };
 
-  const getSiteBadgeStyle = (site) => {
-    let bg = '#e6f0ff';
-    let color = '#0066ff';
-    if (site.includes('메가')) { bg = '#ffe6e6'; color = '#ff3333'; }
-    else if (site.includes('대성')) { bg = '#fff3e6'; color = '#ff8800'; }
-    else if (site.includes('EBS')) { bg = '#e6f7ff'; color = '#0088cc'; }
-    else if (site.includes('시대')) { bg = '#f2e6ff'; color = '#7700ff'; }
-    
-    return {
-      ...styles.siteBadge,
-      backgroundColor: bg,
-      color: color,
-    };
-  };
-
   return (
-    <div style={styles.page}>
-      <div style={styles.container}>
-        <header style={styles.header}>
-          <span style={styles.badgeTop}>✨ 22개정 대규모 인강 및 맞춤형 대상 분석 플랫폼</span>
-          <h1 style={styles.title}>사이트별 모든 강사진 & 수많은 인강 전면 비교</h1>
-          <p style={styles.subtitle}>메가스터디 등 모든 강사진의 수십 개 인강 추천 및 각 강의를 클릭하면 상세 설명과 적합한 학생 유형을 확인 가능</p>
-        </header>
+    <div className="min-h-screen bg-[#10131b] text-[#e1e2ed] flex flex-col font-sans">
+      {/* Top Header */}
+      <header className="sticky top-0 z-50 bg-[#1d1f27]/90 backdrop-blur-md border-b border-[#424754] px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 rounded-lg bg-[#afc6ff] text-[#002d6d] flex items-center justify-center font-bold text-xl shadow-lg">
+            Edu
+          </div>
+          <div>
+            <h1 className="text-lg font-bold tracking-tight text-[#e1e2ed]">EduAI Smart Platform</h1>
+            <p className="text-xs text-[#c2c6d7]">22개정 대규모 인강 및 맞춤형 대상 분석 아카이브</p>
+          </div>
+        </div>
+        <div className="hidden md:flex items-center space-x-4">
+          <span className="text-xs px-3 py-1 rounded-full bg-[#191b23] text-[#afc6ff] border border-[#424754]">
+            High-Contrast Dark Enterprise Mode
+          </span>
+        </div>
+      </header>
 
-        <form onSubmit={handleSearch} style={styles.formContainer}>
-          <div style={styles.inputWrapper}>
+      {/* Main Container */}
+      <main className="flex-1 max-w-5xl w-full mx-auto p-6 md:p-10">
+        <div className="text-center my-8">
+          <span className="inline-block px-4 py-1 text-xs font-semibold bg-[#1d1f27] text-[#afc6ff] rounded-full border border-[#424754] mb-3">
+            ✨ AI 기반 대규모 다중 강사 추천 시스템
+          </span>
+          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-[#e1e2ed] mb-3">
+            원하시는 과목의 모든 강사진과 수십 개 인강을 비교하세요
+          </h2>
+          <p className="text-[#c2c6d7] text-sm md:text-base max-w-2xl mx-auto">
+            메가스터디, 대성마이맥 등 모든 강사진의 강좌를 빠짐없이 탐색하고, 강의별 상세 설명과 적합한 학생 유형을 확인하실 수 있습니다.
+          </p>
+        </div>
+
+        {/* Search Bar */}
+        <form onSubmit={handleSearch} className="mb-12">
+          <div className="ai-glow flex items-center bg-[#1d1f27] border border-[#424754] rounded-lg p-2 shadow-2xl">
             <input
               type="text"
-              placeholder="예: 미적분, 공통수학2, 수학(상) 등 입력"
+              placeholder="예: 미적분, 공통수학2, 수학(상) 등 입력..."
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
-              style={styles.input}
+              className="flex-1 bg-transparent border-none outline-none px-4 py-3 text-[#e1e2ed] placeholder-[#8c90a0] text-base"
             />
-            <button type="submit" disabled={loading} style={styles.button}>
-              {loading ? '⏳ 대규모 강사진 분석 중...' : '전체 강사 및 인강 조회'}
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-6 py-3 bg-[#afc6ff] text-[#002d6d] font-bold rounded-md hover:bg-[#8bb0ff] transition-all disabled:opacity-50 cursor-pointer shadow-md"
+            >
+              {loading ? '분석 중...' : '전체 강사 조회'}
             </button>
           </div>
         </form>
 
-        {error && <div style={styles.errorBox}>{error}</div>}
-
-        {loading && (
-          <div style={styles.loadingContainer}>
-            <p style={styles.loadingText}>모든 사이트의 수많은 강사진과 수십 개에 이르는 난이도별 인강, 적합한 학생 유형을 정밀 분석 중입니다...</p>
+        {error && (
+          <div className="bg-[#93000a]/30 border border-[#ffb4ab] text-[#ffb4ab] p-4 rounded-lg text-center mb-8 font-medium">
+            {error}
           </div>
         )}
 
-        <div style={styles.resultsGrid}>
+        {loading && (
+          <div className="text-center py-16">
+            <div className="inline-block animate-spin rounded-full h-10 w-10 border-4 border-[#afc6ff] border-t-transparent mb-4"></div>
+            <p className="text-[#c2c6d7] text-sm font-medium">모든 사이트의 수많은 강사진과 난이도별 인강 리스트를 수집 중입니다...</p>
+          </div>
+        )}
+
+        {/* Results Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {results.map((group, index) => (
-            <div 
-              key={index} 
-              style={styles.card}
+            <div
+              key={index}
+              className="card-container p-6 cursor-pointer flex flex-col justify-between"
               onClick={() => {
                 setSelectedInstructorGroup(group);
                 setSelectedLecture(null);
               }}
             >
-              <div style={styles.cardHeader}>
-                <span style={getSiteBadgeStyle(group.site)}>{group.site}</span>
-                <span style={styles.instructorTag}>{group.instructor} 강사</span>
+              <div>
+                <div className="flex justify-between items-center mb-4">
+                  <span className="px-3 py-1 text-xs font-bold rounded bg-[#272a32] text-[#afc6ff] border border-[#424754]">
+                    {group.site}
+                  </span>
+                  <span className="text-sm font-semibold text-[#e1e2ed]">{group.instructor} 강사</span>
+                </div>
+                <h3 className="text-lg font-bold text-[#e1e2ed] mb-2">
+                  {group.instructor} 강사의 개설 인강 ({group.lectures.length}개)
+                </h3>
+                <p className="text-sm text-[#c2c6d7] line-clamp-2 mb-4">
+                  {group.mainFeature || '다양한 난이도별 맞춤형 커리큘럼 제공'}
+                </p>
               </div>
-              <h3 style={styles.lectureTitle}>{group.instructor} 강사의 개설 인강 ({group.lectures.length}개)</h3>
-              <p style={styles.feature}>{group.mainFeature || '다양한 난이도별 맞춤형 커리큘럼 제공'}</p>
-              <div style={styles.cardFooter}>
-                <span style={styles.detailClickHint}>🔍 모든 강좌 & 맞춤 대상 보기</span>
+              <div className="border-t border-[#32353d] pt-4 flex justify-between items-center text-xs text-[#afc6ff] font-semibold">
+                <span>📚 시중 교재 {group.recommendedBooks?.length || 0}권 연동</span>
+                <span>모든 강좌 & 대상 보기 ➔</span>
               </div>
             </div>
           ))}
         </div>
 
-        {/* 강사별 상세 모달 영역 */}
+        {/* Instructor Modal */}
         {selectedInstructorGroup && (
-          <div style={styles.modalOverlay} onClick={() => setSelectedInstructorGroup(null)}>
-            <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-              <div style={styles.modalHeader}>
-                <span style={getSiteBadgeStyle(selectedInstructorGroup.site)}>{selectedInstructorGroup.site}</span>
-                <button style={styles.closeButton} onClick={() => setSelectedInstructorGroup(null)}>✕</button>
+          <div className="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="bg-[#191b23] border border-[#424754] rounded-xl max-w-2xl w-full p-6 max-h-[85vh] overflow-y-auto shadow-2xl">
+              <div className="flex justify-between items-center mb-6">
+                <span className="px-3 py-1 text-xs font-bold rounded bg-[#272a32] text-[#afc6ff] border border-[#424754]">
+                  {selectedInstructorGroup.site}
+                </span>
+                <button
+                  onClick={() => setSelectedInstructorGroup(null)}
+                  className="text-[#8c90a0] hover:text-[#e1e2ed] text-xl font-bold px-2"
+                >
+                  ✕
+                </button>
               </div>
-              
-              <h2 style={styles.modalTitle}>{selectedInstructorGroup.instructor} 강사 추천 인강 목록</h2>
-              <p style={styles.modalInstructor}>소속 플랫폼: <strong>{selectedInstructorGroup.site}</strong> | 총 추천 강좌 수: <strong>{selectedInstructorGroup.lectures.length}개</strong></p>
-              <p style={styles.clickGuideText}>💡 <strong>원하시는 강의를 클릭하시면</strong> 해당 강의의 상세 설명과 적합한 학생 유형을 확인하실 수 있습니다!</p>
 
-              {/* 강사의 수많은 인강 목록 */}
-              <div style={styles.sectionBox}>
-                <h4 style={styles.sectionHeading}>📚 추천 인강 리스트 (클릭 가능)</h4>
-                <div style={styles.lecturesListContainer}>
-                  {selectedInstructorGroup.lectures.map((lec, lIdx) => (
-                    <div 
-                      key={lIdx} 
-                      style={styles.lectureItemBoxClickable}
-                      onClick={() => setSelectedLecture(lec)}
-                    >
-                      <div style={styles.lecItemTop}>
-                        <h5 style={styles.lecItemTitle}>[{lec.level || '일반'}] {lec.title}</h5>
-                        <span style={styles.clickBadge}>상세 설명 보기 ↗</span>
-                      </div>
-                      <p style={styles.lecItemDesc}>{lec.description.slice(0, 60)}...</p>
+              <h2 className="text-2xl font-extrabold text-[#e1e2ed] mb-1">
+                {selectedInstructorGroup.instructor} 강사 추천 인강 목록
+              </h2>
+              <p className="text-sm text-[#c2c6d7] mb-6">
+                소속: <strong className="text-[#e1e2ed]">{selectedInstructorGroup.site}</strong> | 총 추천 강좌: <strong className="text-[#e1e2ed]">{selectedInstructorGroup.lectures.length}개</strong>
+              </p>
+
+              <div className="bg-[#afc6ff]/10 border border-[#afc6ff]/30 text-[#afc6ff] p-3 rounded-lg text-xs mb-6 font-medium">
+                💡 원하는 강의를 클릭하시면 상세 설명과 적합한 학생 유형을 확인하실 수 있습니다.
+              </div>
+
+              {/* Lectures List */}
+              <div className="space-y-3 mb-6">
+                <h4 className="text-sm font-bold text-[#e1e2ed]">📚 추천 인강 리스트 (클릭 가능)</h4>
+                {selectedInstructorGroup.lectures.map((lec, lIdx) => (
+                  <div
+                    key={lIdx}
+                    onClick={() => setSelectedLecture(lec)}
+                    className="bg-[#1d1f27] border border-[#334155] hover:border-[#afc6ff] p-4 rounded-lg cursor-pointer transition-all flex justify-between items-center"
+                  >
+                    <div>
+                      <span className="text-xs font-semibold px-2 py-0.5 rounded bg-[#272a32] text-[#d4bbff] mr-2">
+                        {lec.level || '일반'}
+                      </span>
+                      <span className="text-sm font-bold text-[#e1e2ed]">{lec.title}</span>
+                      <p className="text-xs text-[#c2c6d7] mt-1 line-clamp-1">{lec.description}</p>
                     </div>
-                  ))}
-                </div>
+                    <span className="text-xs text-[#afc6ff] font-semibold whitespace-nowrap ml-4">상세 분석 ➔</span>
+                  </div>
+                ))}
               </div>
 
-              {/* 시중 교재 추천 리스트 */}
-              <div style={styles.sectionBox}>
-                <h4 style={styles.sectionHeading}>📖 추천 시중 교재 리스트 (쎈, 블랙라벨, 개념원리 등)</h4>
-                <div style={styles.booksGrid}>
-                  {selectedInstructorGroup.recommendedBooks && selectedInstructorGroup.recommendedBooks.map((book, bIdx) => (
-                    <div key={bIdx} style={styles.bookCardTextOnly}>
-                      <div style={styles.bookTitleRow}>
-                        <p style={styles.bookName}><strong>{book.name}</strong></p>
-                      </div>
-                      <p style={styles.bookReason}>{book.reason}</p>
+              {/* Recommended Books */}
+              <div className="space-y-3">
+                <h4 className="text-sm font-bold text-[#e1e2ed]">📖 추천 시중 교재 리스트</h4>
+                <div className="grid grid-cols-1 gap-2">
+                  {selectedInstructorGroup.recommendedBooks?.map((book, bIdx) => (
+                    <div key={bIdx} className="bg-[#1d1f27] border border-[#334155] p-3 rounded-lg">
+                      <p className="text-sm font-bold text-[#e1e2ed]">{book.name}</p>
+                      <p className="text-xs text-[#c2c6d7] mt-0.5">{book.reason}</p>
                     </div>
                   ))}
                 </div>
@@ -176,390 +220,50 @@ export default function App() {
           </div>
         )}
 
-        {/* 개별 강의 클릭 시 뜨는 상세 설명 및 적합한 학생 모달 */}
+        {/* Lecture Detail Modal */}
         {selectedLecture && (
-          <div style={styles.modalOverlayNested} onClick={() => setSelectedLecture(null)}>
-            <div style={styles.modalContentNested} onClick={(e) => e.stopPropagation()}>
-              <div style={styles.modalHeader}>
-                <span style={styles.nestedBadge}>인강 상세 분석</span>
-                <button style={styles.closeButton} onClick={() => setSelectedLecture(null)}>✕</button>
+          <div className="modal-backdrop fixed inset-0 z-[60] flex items-center justify-center p-4">
+            <div className="bg-[#1d1f27] border border-[#424754] rounded-xl max-w-lg w-full p-6 shadow-2xl">
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-xs font-bold px-2.5 py-1 rounded bg-[#272a32] text-[#d4bbff] border border-[#424754]">
+                  {selectedLecture.level || '일반'}
+                </span>
+                <button
+                  onClick={() => setSelectedLecture(null)}
+                  className="text-[#8c90a0] hover:text-[#e1e2ed] text-xl font-bold"
+                >
+                  ✕
+                </button>
               </div>
 
-              <h2 style={styles.nestedTitle}>[{selectedLecture.level || '일반'}] {selectedLecture.title}</h2>
-              
-              <div style={styles.nestedSection}>
-                <h4 style={styles.nestedSubHeading}>📌 강의 상세 설명</h4>
-                <p style={styles.nestedText}>{selectedLecture.description}</p>
+              <h3 className="text-xl font-extrabold text-[#e1e2ed] mb-4">{selectedLecture.title}</h3>
+
+              <div className="bg-[#191b23] border border-[#334155] p-4 rounded-lg mb-4">
+                <h5 className="text-xs font-bold text-[#afc6ff] uppercase tracking-wider mb-2">📌 강의 상세 설명</h5>
+                <p className="text-sm text-[#c2c6d7] leading-relaxed">{selectedLecture.description}</p>
               </div>
 
-              <div style={styles.nestedSectionTarget}>
-                <h4 style={styles.nestedSubHeadingTarget}>🎯 이 강의에 가장 적합한 학생 유형</h4>
-                <p style={styles.nestedTextTarget}>{selectedLecture.targetStudent || '해당 난이도의 개념을 확실히 다지고 실력을 도약하고 싶은 학생'}</p>
+              <div className="bg-[#191b23] border border-[#ffb68f]/30 p-4 rounded-lg mb-6">
+                <h5 className="text-xs font-bold text-[#ffb68f] uppercase tracking-wider mb-2">🎯 이 강의에 가장 적합한 학생 유형</h5>
+                <p className="text-sm text-[#e1e2ed] font-medium leading-relaxed">
+                  {selectedLecture.targetStudent || '해당 난이도의 개념을 확실히 다지고 실력을 도약하고 싶은 학생'}
+                </p>
               </div>
 
-              <button style={styles.nestedCloseBtn} onClick={() => setSelectedLecture(null)}>확인 완료</button>
+              <button
+                onClick={() => setSelectedLecture(null)}
+                className="w-full py-3 bg-[#afc6ff] text-[#002d6d] font-bold rounded-lg hover:bg-[#8bb0ff] transition-all cursor-pointer"
+              >
+                확인 완료
+              </button>
             </div>
           </div>
         )}
-      </div>
+      </main>
+
+      <footer className="border-t border-[#424754] py-6 text-center text-xs text-[#c2c6d7]">
+        © 2026 EduAI Smart Learning Platform. All rights reserved.
+      </footer>
     </div>
   );
 }
-
-const styles = {
-  page: {
-    minHeight: '100vh',
-    background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-    padding: '40px 20px',
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-  },
-  container: {
-    maxWidth: '1000px',
-    margin: '0 auto',
-  },
-  header: {
-    textAlign: 'center',
-    marginBottom: '40px',
-  },
-  badgeTop: {
-    display: 'inline-block',
-    padding: '6px 14px',
-    fontSize: '13px',
-    fontWeight: '600',
-    backgroundColor: '#ffffff',
-    color: '#0066ff',
-    borderRadius: '20px',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-    marginBottom: '12px',
-  },
-  title: {
-    fontSize: '32px',
-    color: '#1a1a1a',
-    fontWeight: '800',
-    marginBottom: '10px',
-  },
-  subtitle: {
-    fontSize: '16px',
-    color: '#555',
-  },
-  formContainer: {
-    marginBottom: '40px',
-  },
-  inputWrapper: {
-    display: 'flex',
-    background: '#ffffff',
-    padding: '8px',
-    borderRadius: '16px',
-    boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
-    gap: '10px',
-  },
-  input: {
-    flex: 1,
-    padding: '14px 20px',
-    fontSize: '16px',
-    border: 'none',
-    outline: 'none',
-    backgroundColor: 'transparent',
-  },
-  button: {
-    padding: '14px 28px',
-    fontSize: '16px',
-    backgroundColor: '#0066ff',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '12px',
-    cursor: 'pointer',
-    fontWeight: '600',
-  },
-  errorBox: {
-    backgroundColor: '#ffebe6',
-    color: '#ff4d4f',
-    padding: '14px',
-    borderRadius: '10px',
-    textAlign: 'center',
-    marginBottom: '20px',
-    fontWeight: '500',
-    wordBreak: 'break-all',
-  },
-  loadingContainer: {
-    textAlign: 'center',
-    padding: '40px',
-    color: '#444',
-    fontSize: '16px',
-    fontWeight: '500',
-  },
-  resultsGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-    gap: '20px',
-  },
-  card: {
-    backgroundColor: '#ffffff',
-    border: '2px solid transparent',
-    borderRadius: '16px',
-    padding: '24px',
-    boxShadow: '0 6px 16px rgba(0,0,0,0.04)',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    cursor: 'pointer',
-    transition: 'all 0.2s ease',
-  },
-  cardHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '14px',
-  },
-  siteBadge: {
-    padding: '6px 10px',
-    fontSize: '12px',
-    fontWeight: '700',
-    borderRadius: '6px',
-  },
-  instructorTag: {
-    fontSize: '14px',
-    fontWeight: '600',
-    color: '#444',
-  },
-  lectureTitle: {
-    fontSize: '17px',
-    color: '#111',
-    fontWeight: '700',
-    margin: '0 0 10px 0',
-    lineHeight: '1.4',
-  },
-  feature: {
-    fontSize: '14px',
-    color: '#666',
-    margin: '0 0 15px 0',
-    lineHeight: '1.5',
-  },
-  cardFooter: {
-    borderTop: '1px solid #f0f0f0',
-    paddingTop: '12px',
-    textAlign: 'right',
-  },
-  detailClickHint: {
-    fontSize: '13px',
-    color: '#0066ff',
-    fontWeight: '600',
-  },
-  modalOverlay: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1000,
-    padding: '20px',
-  },
-  modalContent: {
-    backgroundColor: '#fff',
-    borderRadius: '20px',
-    maxWidth: '750px',
-    width: '100%',
-    padding: '30px',
-    boxShadow: '0 20px 40px rgba(0,0,0,0.25)',
-    maxHeight: '90vh',
-    overflowY: 'auto',
-  },
-  modalHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '15px',
-  },
-  closeButton: {
-    background: 'none',
-    border: 'none',
-    fontSize: '22px',
-    cursor: 'pointer',
-    color: '#888',
-  },
-  modalTitle: {
-    fontSize: '24px',
-    fontWeight: '800',
-    color: '#111',
-    margin: '0 0 6px 0',
-  },
-  modalInstructor: {
-    fontSize: '15px',
-    color: '#555',
-    marginBottom: '10px',
-  },
-  clickGuideText: {
-    fontSize: '13px',
-    color: '#0066ff',
-    backgroundColor: '#eff6ff',
-    padding: '10px 14px',
-    borderRadius: '8px',
-    marginBottom: '20px',
-  },
-  sectionBox: {
-    backgroundColor: '#f8fafc',
-    borderRadius: '12px',
-    padding: '16px',
-    marginBottom: '16px',
-    border: '1px solid #e2e8f0',
-  },
-  sectionHeading: {
-    fontSize: '16px',
-    fontWeight: '700',
-    color: '#1e293b',
-    margin: '0 0 12px 0',
-  },
-  lecturesListContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '12px',
-  },
-  lectureItemBoxClickable: {
-    backgroundColor: '#fff',
-    padding: '14px',
-    borderRadius: '10px',
-    border: '1px solid #cbd5e1',
-    cursor: 'pointer',
-    transition: 'all 0.2s',
-  },
-  lecItemTop: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '4px',
-  },
-  lecItemTitle: {
-    fontSize: '15px',
-    fontWeight: '700',
-    color: '#0f172a',
-    margin: 0,
-  },
-  clickBadge: {
-    fontSize: '12px',
-    color: '#2563eb',
-    backgroundColor: '#eff6ff',
-    padding: '3px 8px',
-    borderRadius: '6px',
-    fontWeight: '600',
-  },
-  lecItemDesc: {
-    fontSize: '13px',
-    color: '#475569',
-    margin: 0,
-    lineHeight: '1.5',
-  },
-  booksGrid: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '10px',
-  },
-  bookCardTextOnly: {
-    backgroundColor: '#fff',
-    padding: '12px 14px',
-    borderRadius: '10px',
-    border: '1px solid #cbd5e1',
-  },
-  bookTitleRow: {
-    marginBottom: '4px',
-  },
-  bookName: {
-    fontSize: '14px',
-    color: '#0f172a',
-    margin: 0,
-  },
-  bookReason: {
-    fontSize: '13px',
-    color: '#64748b',
-    margin: 0,
-    lineHeight: '1.4',
-  },
-  modalOverlayNested: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1100,
-    padding: '20px',
-  },
-  modalContentNested: {
-    backgroundColor: '#fff',
-    borderRadius: '20px',
-    maxWidth: '600px',
-    width: '100%',
-    padding: '30px',
-    boxShadow: '0 25px 50px rgba(0,0,0,0.3)',
-  },
-  nestedBadge: {
-    fontSize: '12px',
-    backgroundColor: '#f1f5f9',
-    color: '#475569',
-    padding: '4px 10px',
-    borderRadius: '6px',
-    fontWeight: '700',
-  },
-  nestedTitle: {
-    fontSize: '22px',
-    fontWeight: '800',
-    color: '#0f172a',
-    margin: '15px 0 20px 0',
-  },
-  nestedSection: {
-    backgroundColor: '#f8fafc',
-    padding: '14px',
-    borderRadius: '10px',
-    marginBottom: '14px',
-    border: '1px solid #e2e8f0',
-  },
-  nestedSectionTarget: {
-    backgroundColor: '#ecfdf5',
-    padding: '14px',
-    borderRadius: '10px',
-    marginBottom: '24px',
-    border: '1px solid #a7f3d0',
-  },
-  nestedSubHeading: {
-    fontSize: '14px',
-    fontWeight: '700',
-    color: '#334155',
-    margin: '0 0 6px 0',
-  },
-  nestedSubHeadingTarget: {
-    fontSize: '14px',
-    fontWeight: '700',
-    color: '#065f46',
-    margin: '0 0 6px 0',
-  },
-  nestedText: {
-    fontSize: '14px',
-    color: '#475569',
-    margin: 0,
-    lineHeight: '1.6',
-  },
-  nestedTextTarget: {
-    fontSize: '14px',
-    color: '#047857',
-    margin: 0,
-    lineHeight: '1.6',
-    fontWeight: '500',
-  },
-  nestedCloseBtn: {
-    width: '100%',
-    padding: '12px',
-    backgroundColor: '#0066ff',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '10px',
-    fontSize: '15px',
-    fontWeight: '700',
-    cursor: 'pointer',
-  },
-};
