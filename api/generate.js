@@ -34,7 +34,7 @@ module.exports = async function handler(req, res) {
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
     // 현재 가장 안정적이고 공식 지원되는 표준 모델명으로 교체
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3.1-flash-lite" });
 
     const prompt = `
       22개정 교육과정에 맞춰 학생들이 "${subject}" 과목의 인강을 찾고 있습니다.
