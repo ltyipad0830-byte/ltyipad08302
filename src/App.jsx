@@ -72,22 +72,22 @@ export default function App() {
     <div style={styles.page}>
       <div style={styles.container}>
         <header style={styles.header}>
-          <span style={styles.badgeTop}>✨ 22개정 교육과정 정밀 비교 플랫폼</span>
-          <h1 style={styles.title}>인강 전면 비교 & 교재/후기 통합 서비스</h1>
-          <p style={styles.subtitle}>검색 결과 연동형 상세 페이지, 실제 도서 표지 및 수강 후기 다이렉트 연결</p>
+          <span style={styles.badgeTop}>✨ 22개정 교육과정 다중 강사 및 정밀 연동 플랫폼</span>
+          <h1 style={styles.title}>사이트별 복수 강사 & 난이도별 인강 전면 비교</h1>
+          <p style={styles.subtitle}>사이트마다 여러 강사진과 다양한 난이도별 강좌, 실제 도서 상세 구매처 및 수강 후기 직링크 연동</p>
         </header>
 
         <form onSubmit={handleSearch} style={styles.formContainer}>
           <div style={styles.inputWrapper}>
             <input
               type="text"
-              placeholder="예: 미적분, 수학(상), 공통국어1 등 입력"
+              placeholder="예: 공통수학2, 미적분, 수학(상) 등 입력"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               style={styles.input}
             />
             <button type="submit" disabled={loading} style={styles.button}>
-              {loading ? '⏳ 정밀 수집 중...' : '전체 인강 조회'}
+              {loading ? '⏳ 다중 강사 분석 중...' : '전체 강사 조회'}
             </button>
           </div>
         </form>
@@ -96,7 +96,7 @@ export default function App() {
 
         {loading && (
           <div style={styles.loadingContainer}>
-            <p style={styles.loadingText}>모든 사이트의 강사별 인강 검색 링크, 교재 표지 및 후기 화면을 매칭 중입니다...</p>
+            <p style={styles.loadingText}>각 사이트별 여러 강사진과 난이도별 인강, 정밀 도서 상세 페이지를 수집 중입니다...</p>
           </div>
         )}
 
@@ -111,8 +111,8 @@ export default function App() {
                 <span style={getSiteBadgeStyle(group.site)}>{group.site}</span>
                 <span style={styles.instructorTag}>{group.instructor} 강사</span>
               </div>
-              <h3 style={styles.lectureTitle}>{group.instructor} 강사의 전체 강좌 ({group.lectures.length}개)</h3>
-              <p style={styles.feature}>{group.mainFeature || '해당 강사의 대표 커리큘럼 및 전용 교재 완비'}</p>
+              <h3 style={styles.lectureTitle}>{group.instructor} 강사 ({group.lectures.length}개 강좌)</h3>
+              <p style={styles.feature}>{group.mainFeature || '난이도별 맞춤형 커리큘럼 및 전용 교재 완비'}</p>
               <div style={styles.cardFooter}>
                 <span style={styles.detailClickHint}>🔍 모든 강좌 & 교재 & 후기 보기</span>
               </div>
@@ -132,21 +132,21 @@ export default function App() {
               <h2 style={styles.modalTitle}>{selectedInstructorGroup.instructor} 강사 통합 정보</h2>
               <p style={styles.modalInstructor}>소속 플랫폼: <strong>{selectedInstructorGroup.site}</strong></p>
 
-              {/* 1. 해당 강사의 모든 인강 목록 및 커리큘럼 */}
+              {/* 1. 해당 강사의 모든 인강 목록 및 난이도별 커리큘럼 */}
               <div style={styles.sectionBox}>
-                <h4 style={styles.sectionHeading}>📚 개설된 전체 인강 목록 및 커리큘럼</h4>
+                <h4 style={styles.sectionHeading}>📚 난이도별 개설된 전체 인강 목록</h4>
                 <div style={styles.lecturesListContainer}>
                   {selectedInstructorGroup.lectures.map((lec, lIdx) => (
                     <div key={lIdx} style={styles.lectureItemBox}>
                       <div style={styles.lecItemTop}>
-                        <h5 style={styles.lecItemTitle}>{lec.title}</h5>
+                        <h5 style={styles.lecItemTitle}>[{lec.level || '일반'}] {lec.title}</h5>
                         <a 
                           href={lec.lectureUrl} 
                           target="_blank" 
                           rel="noopener noreferrer" 
                           style={styles.lecDirectLinkBtn}
                         >
-                          강의 검색 결과 바로가기 ↗
+                          강의 바로가기 ↗
                         </a>
                       </div>
                       <p style={styles.lecItemDesc}>{lec.description}</p>
@@ -155,9 +155,9 @@ export default function App() {
                 </div>
               </div>
 
-              {/* 2. 실제 시중 교재 사진 및 구매처 */}
+              {/* 2. 실제 시중 교재 사진 및 상세 구매처 */}
               <div style={styles.sectionBox}>
-                <h4 style={styles.sectionHeading}>📖 추천 시중 교재 (정밀 매칭 및 실제 표지)</h4>
+                <h4 style={styles.sectionHeading}>📖 추천 시중 교재 (상세 구매처 연동)</h4>
                 <div style={styles.booksGrid}>
                   {selectedInstructorGroup.recommendedBooks && selectedInstructorGroup.recommendedBooks.map((book, bIdx) => (
                     <div key={bIdx} style={styles.bookCard}>
@@ -165,7 +165,7 @@ export default function App() {
                         src={book.imageUrl} 
                         alt={book.name} 
                         style={styles.bookImage}
-                        onError={(e) => { e.target.src = 'https://image.yes24.com/goods/102345678/L'; }}
+                        onError={(e) => { e.target.src = 'https://image.yes24.com/goods/167508612/L'; }}
                       />
                       <div style={styles.bookInfo}>
                         <div style={styles.bookTitleRow}>
@@ -487,7 +487,7 @@ const styles = {
   bookReason: {
     fontSize: '13px',
     color: '#64748b',
-    margin: 0,
+    margin: '0',
     lineHeight: '1.4',
   },
   reviewSubText: {

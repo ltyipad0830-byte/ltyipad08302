@@ -38,16 +38,14 @@ module.exports = async function handler(req, res) {
 
   const prompt = `
     22개정 교육과정에 맞춰 학생들이 "${subject}" 과목의 인강을 찾고 있습니다.
-    메가스터디, 대성마이맥, EBS, 시대인재 등 주요 플랫폼에 개설된 해당 과목의 **모든 주요 강사(예: 현우진, 배성민, 시대인재 강사진 등)**를 빠짐없이 전부 포함해 주세요.
-    
-    [핵심 요구사항 - 강의 바로가기 링크 메커니즘]:
-    사용자가 제공한 예시처럼, 단순 메인 홈페이지가 아니라 **각 사이트의 공식 통합 검색 및 강좌 검색 결과 페이지 URL**을 생성해야 합니다.
-    예를 들어 메가스터디는 https://www.megastudy.net/search_ai/search_main.asp (또는 검색 파라미터가 포함된 URL), 대성마이맥은 대성마이맥 통합 검색 페이지, 시대인재는 시대인재 검색/단과 페이지 등, **해당 강사와 과목/강좌가 바로 검색되어 결과 화면으로 넘어가는 주소**를 각 강좌(lectureUrl)마다 정확하게 매칭해 주세요.
-    
-    [교재 및 후기 링크]:
-    - 'imageUrl': 예스24/알라딘 등의 실제 도서 표지 이미지 URL
-    - 'bookStoreUrl': 예스24 도서 상세 검색/구매 페이지 URL
-    - 'reviewLinks': 해당 플랫폼의 강사 수강평 및 커뮤니티 수강 후기 페이지 URL
+    메가스터디, 대성마이맥, EBS, 시대인재 등 각 인강 사이트마다 해당 과목을 강의하는 **여러 명의 주요 강사(최소 사이트당 2~3명 이상, 예: 메가스터디의 현우진, 김기현, 정승제 등 / 대성마이맥의 배성민, 한석원, 이창무 등 / 시대인재 등)**를 누락 없이 전부 포함해 주세요.
+    그리고 **각 강사별로 난이도별(입문, 기본, 실전, 고난도 등)로 여러 개의 강좌(최소 2~4개 이상)**를 각각 상세하게 배열에 담아주세요. 단 한 명의 강사나 한 개의 인강만 보여주면 절대 안 됩니다.
+
+    [필수 규칙 - 링크 및 상세 페이지 연동]:
+    1. 'lectureUrl': 각 사이트의 메인 홈페이지가 아니라, 해당 강사의 전용 강의 검색 결과 페이지 또는 강좌 상세 페이지(예: 메가스터디 통합 검색 URL 또는 강사별 상세 강의 페이지)를 매칭하세요.
+    2. 'bookStoreUrl': 사용자가 언급한 것처럼 단순히 예스24 메인이 아니라, 해당 시중 교재의 정확한 상세 도서 페이지 URL(예: https://www.yes24.com/product/goods/167508612 형식의 실제 상품 고유 번호가 포함된 상세 구매 URL)을 반드시 제공하세요.
+    3. 'imageUrl': 해당 교재의 실제 표지 이미지 고화질 URL을 매칭하세요.
+    4. 'reviewLinks': 해당 강사 및 강좌의 실제 수강평, 평점, 수능 커뮤니티 후기 페이지 URL을 제공하세요.
 
     반드시 아래의 JSON 배열 형식으로만 반환해 주세요. 다른 설명이나 마크다운 서식은 절대 포함하지 마세요.
     
@@ -55,26 +53,33 @@ module.exports = async function handler(req, res) {
       {
         "site": "메가스터디",
         "instructor": "현우진",
-        "mainFeature": "수학의 1타 강사, 수능/내신 완벽 대비 전체 커리큘럼",
+        "mainFeature": "수학 1타 강사, 개념부터 고난도 킬러 문항까지 완벽 마스터",
         "lectures": [
           {
-            "title": "현우진 미적분 강좌 전체",
-            "description": "메가스터디에서 현우진 강사의 미적분 전체 강좌 검색 결과",
+            "title": "시발점",
+            "level": "입문/개념",
+            "description": "수학의 기초 개념을 탄탄하게 다지는 필수 입문 강좌",
+            "lectureUrl": "https://www.megastudy.net/search_ai/search_main.asp"
+          },
+          {
+            "title": "뉴맵 (New M)",
+            "level": "실전/심화",
+            "description": "수능적 사고력과 실전 문제 해결 능력을 기르는 대표 강좌",
             "lectureUrl": "https://www.megastudy.net/search_ai/search_main.asp"
           }
         ],
         "recommendedBooks": [
           {
-            "name": "쎈 미적분",
-            "reason": "미적분 필수 유형 학습을 위한 대표 시중 교재",
-            "imageUrl": "https://image.yes24.com/goods/102345678/L",
-            "bookStoreUrl": "https://www.yes24.com/Product/Search?domain=ALL&query=쎈+미적분"
+            "name": "쎈 수학",
+            "reason": "다양한 난이도별 유형 문제를 통해 개념을 확실히 체화하는 교재",
+            "imageUrl": "https://image.yes24.com/goods/167508612/L",
+            "bookStoreUrl": "https://www.yes24.com/product/goods/167508612"
           }
         ],
         "reviewLinks": [
           {
-            "platformName": "메가스터디 현우진 수강후기",
-            "url": "https://www.megastudy.net/teacher_v2/eval/eval_list.asp?tec_cd=woojin"
+            "platformName": "메가스터디 현우진 수강생 평점 및 후기",
+            "url": "https://www.megastudy.net"
           }
         ]
       }
