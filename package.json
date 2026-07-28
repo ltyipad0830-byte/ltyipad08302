@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "22개정 교육과정 인강 통합 검색 앱",
   "dependencies": {
-    "@google/generative-ai": "^0.13.0",
+    "@google/generative-ai": "^0.21.0",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
