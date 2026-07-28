@@ -5,7 +5,7 @@ export default function App() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [selectedLecture, setSelectedLecture] = useState(null);
+  const [selectedInstructorGroup, setSelectedInstructorGroup] = useState(null);
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -14,7 +14,7 @@ export default function App() {
     setLoading(true);
     setError('');
     setResults([]);
-    setSelectedLecture(null);
+    setSelectedInstructorGroup(null);
 
     try {
       const response = await fetch('/api/generate', {
@@ -64,20 +64,20 @@ export default function App() {
         <header style={styles.header}>
           <span style={styles.badgeTop}>✨ 22개정 교육과정 전면 비교</span>
           <h1 style={styles.title}>인강 전면 비교 & 교재/후기 플랫폼</h1>
-          <p style={styles.subtitle}>사이트별 모든 주요 인강 목록, 복수 교재 이미지, 수강 후기 링크를 한눈에 확인하세요</p>
+          <p style={styles.subtitle}>과목별 모든 강사의 전체 커리큘럼, 실제 교재 판매처 사진 및 수강 후기 모음</p>
         </header>
 
         <form onSubmit={handleSearch} style={styles.formContainer}>
           <div style={styles.inputWrapper}>
             <input
               type="text"
-              placeholder="예: 공통국어1, 수학(상), 통합사회 등 과목 입력"
+              placeholder="예: 수학(상), 공통국어1, 지구과학 등 입력"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               style={styles.input}
             />
             <button type="submit" disabled={loading} style={styles.button}>
-              {loading ? '⏳ 전체 검색 중...' : '전체 인강 찾기'}
+              {loading ? '⏳ 모든 인강 수집 중...' : '전체 인강 조회'}
             </button>
           </div>
         </form>
@@ -86,60 +86,82 @@ export default function App() {
 
         {loading && (
           <div style={styles.loadingContainer}>
-            <p style={styles.loadingText}>Gemini-3.1-Flash-Lite가 해당 과목의 모든 인강 및 교재/후기를 정밀 분석 중입니다...</p>
+            <p style={styles.loadingText}>Gemini-3.1-Flash-Lite가 해당 과목의 모든 강사별 전체 인강 및 교재/후기를 정밀 분석 중입니다...</p>
           </div>
         )}
 
         <div style={styles.resultsGrid}>
-          {results.map((item, index) => (
+          {results.map((group, index) => (
             <div 
               key={index} 
               style={styles.card}
-              onClick={() => setSelectedLecture(item)}
+              onClick={() => setSelectedInstructorGroup(group)}
             >
               <div style={styles.cardHeader}>
-                <span style={getSiteBadgeStyle(item.site)}>{item.site}</span>
-                <span style={styles.instructorTag}>{item.instructor} 강사</span>
+                <span style={getSiteBadgeStyle(group.site)}>{group.site}</span>
+                <span style={styles.instructorTag}>{group.instructor} 강사</span>
               </div>
-              <h3 style={styles.lectureTitle}>{item.title}</h3>
-              <p style={styles.feature}>{item.feature}</p>
+              <h3 style={styles.lectureTitle}>{group.instructor} 강사의 전체 강좌 ({group.lectures.length개})</h3>
+              <p style={styles.feature}>{group.mainFeature || '해당 강사의 대표 커리큘럼 및 전용 교재 완비'}</p>
               <div style={styles.cardFooter}>
-                <span style={styles.detailClickHint}>🔍 전체 교재 & 수강 후기 보기</span>
+                <span style={styles.detailClickHint}>🔍 모든 강좌 & 교재 & 후기 보기</span>
               </div>
             </div>
           ))}
         </div>
 
-        {/* 상세 모달 영역 */}
-        {selectedLecture && (
-          <div style={styles.modalOverlay} onClick={() => setSelectedLecture(null)}>
+        {/* 상세 모달 영역 (강사별 전체 인강 목록, 교재, 수강 후기 분리 제공) */}
+        {selectedInstructorGroup && (
+          <div style={styles.modalOverlay} onClick={() => setSelectedInstructorGroup(null)}>
             <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
               <div style={styles.modalHeader}>
-                <span style={getSiteBadgeStyle(selectedLecture.site)}>{selectedLecture.site}</span>
-                <button style={styles.closeButton} onClick={() => setSelectedLecture(null)}>✕</button>
+                <span style={getSiteBadgeStyle(selectedInstructorGroup.site)}>{selectedInstructorGroup.site}</span>
+                <button style={styles.closeButton} onClick={() => setSelectedInstructorGroup(null)}>✕</button>
               </div>
               
-              <h2 style={styles.modalTitle}>{selectedLecture.title}</h2>
-              <p style={styles.modalInstructor}>진행 강사: <strong>{selectedLecture.instructor}</strong></p>
+              <h2 style={styles.modalTitle}>{selectedInstructorGroup.instructor} 강사 통합 정보</h2>
+              <p style={styles.modalInstructor}>소속 플랫폼: <strong>{selectedInstructorGroup.site}</strong></p>
 
+              {/* 1. 해당 강사의 모든 인강 목록 및 상세 설명 */}
               <div style={styles.sectionBox}>
-                <h4 style={styles.sectionHeading}>📖 강의 상세 설명</h4>
-                <p style={styles.sectionText}>{selectedLecture.description}</p>
+                <h4 style={styles.sectionHeading}>📚 개설된 전체 인강 목록 및 커리큘럼</h4>
+                <div style={styles.lecturesListContainer}>
+                  {selectedInstructorGroup.lectures.map((lec, lIdx) => (
+                    <div key={lIdx} style={styles.lectureItemBox}>
+                      <div style={styles.lecItemTop}>
+                        <h5 style={styles.lecItemTitle}>{lec.title}</h5>
+                        <a 
+                          href={lec.lectureUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          style={styles.lecDirectLinkBtn}
+                        >
+                          강의실 바로가기 ↗
+                        </a>
+                      </div>
+                      <p style={styles.lecItemDesc}>{lec.description}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
 
+              {/* 2. 실제 시중 교재 사진 및 추천 이유 */}
               <div style={styles.sectionBox}>
-                <h4 style={styles.sectionHeading}>📚 함께 풀면 좋은 시중 교재 추천 (복수)</h4>
+                <h4 style={styles.sectionHeading}>📖 추천 시중 교재 (정밀 매칭)</h4>
                 <div style={styles.booksGrid}>
-                  {selectedLecture.recommendedBooks && selectedLecture.recommendedBooks.map((book, bIdx) => (
+                  {selectedInstructorGroup.recommendedBooks && selectedInstructorGroup.recommendedBooks.map((book, bIdx) => (
                     <div key={bIdx} style={styles.bookCard}>
                       <img 
-                        src={book.imageUrl || 'https://via.placeholder.com/150x200?text=No+Image'} 
+                        src={book.imageUrl} 
                         alt={book.name} 
                         style={styles.bookImage}
-                        onError={(e) => { e.target.src = 'https://via.placeholder.com/150x200?text=Book+Cover'; }}
+                        onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1532012197267-da84d127e765?w=200'; }}
                       />
                       <div style={styles.bookInfo}>
-                        <p style={styles.bookName}><strong>{book.name}</strong></p>
+                        <div style={styles.bookTitleRow}>
+                          <p style={styles.bookName}><strong>{book.name}</strong></p>
+                          <a href={book.bookStoreUrl} target="_blank" rel="noopener noreferrer" style={styles.bookStoreLink}>교재 구매처 ↗</a>
+                        </div>
                         <p style={styles.bookReason}>{book.reason}</p>
                       </div>
                     </div>
@@ -147,23 +169,23 @@ export default function App() {
                 </div>
               </div>
 
-              <div style={styles.actionBox}>
-                <a 
-                  href={selectedLecture.lectureLink || '#'} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  style={styles.linkButton}
-                >
-                  🔗 인강 사이트 바로가기
-                </a>
-                <a 
-                  href={selectedLecture.reviewLink || '#'} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  style={styles.reviewButton}
-                >
-                  ⭐ 실제 수강 후기 보러가기
-                </a>
+              {/* 3. 실제 수강 후기 모음 링크 */}
+              <div style={styles.sectionBox}>
+                <h4 style={styles.sectionHeading}>⭐ 수강생 생생 후기</h4>
+                <p style={styles.reviewSubText}>해당 강사 및 강좌들에 대한 수강생들의 실제 평점과 합격 후기를 확인할 수 있습니다.</p>
+                <div style={styles.reviewLinksContainer}>
+                  {selectedInstructorGroup.reviewLinks && selectedInstructorGroup.reviewLinks.map((rev, rIdx) => (
+                    <a 
+                      key={rIdx} 
+                      href={rev.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      style={styles.reviewLinkBadge}
+                    >
+                      💬 {rev.platformName} 수강 후기 보러가기 ↗
+                    </a>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -290,7 +312,7 @@ const styles = {
     color: '#444',
   },
   lectureTitle: {
-    fontSize: '16px',
+    fontSize: '17px',
     color: '#111',
     fontWeight: '700',
     margin: '0 0 10px 0',
@@ -318,7 +340,7 @@ const styles = {
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -328,10 +350,10 @@ const styles = {
   modalContent: {
     backgroundColor: '#fff',
     borderRadius: '20px',
-    maxWidth: '700px',
+    maxWidth: '750px',
     width: '100%',
     padding: '30px',
-    boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
+    boxShadow: '0 20px 40px rgba(0,0,0,0.25)',
     maxHeight: '90vh',
     overflowY: 'auto',
   },
@@ -344,15 +366,15 @@ const styles = {
   closeButton: {
     background: 'none',
     border: 'none',
-    fontSize: '20px',
+    fontSize: '22px',
     cursor: 'pointer',
     color: '#888',
   },
   modalTitle: {
-    fontSize: '22px',
+    fontSize: '24px',
     fontWeight: '800',
     color: '#111',
-    margin: '0 0 8px 0',
+    margin: '0 0 6px 0',
   },
   modalInstructor: {
     fontSize: '15px',
@@ -367,16 +389,48 @@ const styles = {
     border: '1px solid #e2e8f0',
   },
   sectionHeading: {
-    fontSize: '15px',
+    fontSize: '16px',
     fontWeight: '700',
     color: '#1e293b',
     margin: '0 0 12px 0',
   },
-  sectionText: {
-    fontSize: '14px',
-    color: '#475569',
-    lineHeight: '1.6',
+  lecturesListContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+  },
+  lectureItemBox: {
+    backgroundColor: '#fff',
+    padding: '14px',
+    borderRadius: '10px',
+    border: '1px solid #cbd5e1',
+  },
+  lecItemTop: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '6px',
+  },
+  lecItemTitle: {
+    fontSize: '15px',
+    fontWeight: '700',
+    color: '#0f172a',
     margin: 0,
+  },
+  lecDirectLinkBtn: {
+    fontSize: '12px',
+    backgroundColor: '#eff6ff',
+    color: '#2563eb',
+    padding: '4px 10px',
+    borderRadius: '6px',
+    textDecoration: 'none',
+    fontWeight: '600',
+  },
+  lecItemDesc: {
+    fontSize: '13px',
+    color: '#475569',
+    margin: 0,
+    lineHeight: '1.5',
   },
   booksGrid: {
     display: 'flex',
@@ -393,8 +447,8 @@ const styles = {
     alignItems: 'center',
   },
   bookImage: {
-    width: '60px',
-    height: '80px',
+    width: '65px',
+    height: '90px',
     objectFit: 'cover',
     borderRadius: '6px',
     backgroundColor: '#e2e8f0',
@@ -403,10 +457,22 @@ const styles = {
   bookInfo: {
     flex: 1,
   },
+  bookTitleRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '4px',
+  },
   bookName: {
     fontSize: '14px',
     color: '#0f172a',
-    margin: '0 0 4px 0',
+    margin: 0,
+  },
+  bookStoreLink: {
+    fontSize: '11px',
+    color: '#0284c7',
+    textDecoration: 'none',
+    fontWeight: '600',
   },
   bookReason: {
     fontSize: '13px',
@@ -414,33 +480,25 @@ const styles = {
     margin: 0,
     lineHeight: '1.4',
   },
-  actionBox: {
+  reviewSubText: {
+    fontSize: '13px',
+    color: '#64748b',
+    margin: '0 0 10px 0',
+  },
+  reviewLinksContainer: {
     display: 'flex',
-    gap: '10px',
-    marginTop: '20px',
+    flexDirection: 'column',
+    gap: '8px',
   },
-  linkButton: {
-    flex: 1,
-    textAlign: 'center',
-    backgroundColor: '#0066ff',
-    color: '#fff',
-    padding: '14px',
-    borderRadius: '12px',
+  reviewLinkBadge: {
+    display: 'inline-block',
+    backgroundColor: '#ecfdf5',
+    color: '#059669',
+    padding: '10px 14px',
+    borderRadius: '8px',
     textDecoration: 'none',
-    fontWeight: '700',
-    fontSize: '14px',
-    boxShadow: '0 4px 12px rgba(0, 102, 255, 0.3)',
-  },
-  reviewButton: {
-    flex: 1,
-    textAlign: 'center',
-    backgroundColor: '#10b981',
-    color: '#fff',
-    padding: '14px',
-    borderRadius: '12px',
-    textDecoration: 'none',
-    fontWeight: '700',
-    fontSize: '14px',
-    boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
+    fontWeight: '600',
+    fontSize: '13px',
+    border: '1px solid #a7f3d0',
   },
 };
