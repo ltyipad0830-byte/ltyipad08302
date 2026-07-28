@@ -62,9 +62,9 @@ export default function App() {
     <div style={styles.page}>
       <div style={styles.container}>
         <header style={styles.header}>
-          <span style={styles.badgeTop}>✨ 22개정 교육과정 맞춤</span>
-          <h1 style={styles.title}>인강 및 추천 교재 통합 플랫폼</h1>
-          <p style={styles.subtitle}>인강 상세 정보와 함께 풀면 좋은 시중 교재를 한눈에 확인하세요</p>
+          <span style={styles.badgeTop}>✨ 22개정 교육과정 전면 비교</span>
+          <h1 style={styles.title}>인강 전면 비교 & 교재/후기 플랫폼</h1>
+          <p style={styles.subtitle}>사이트별 모든 주요 인강 목록, 복수 교재 이미지, 수강 후기 링크를 한눈에 확인하세요</p>
         </header>
 
         <form onSubmit={handleSearch} style={styles.formContainer}>
@@ -77,7 +77,7 @@ export default function App() {
               style={styles.input}
             />
             <button type="submit" disabled={loading} style={styles.button}>
-              {loading ? '⏳ 분석 중...' : '통합 검색'}
+              {loading ? '⏳ 전체 검색 중...' : '전체 인강 찾기'}
             </button>
           </div>
         </form>
@@ -86,7 +86,7 @@ export default function App() {
 
         {loading && (
           <div style={styles.loadingContainer}>
-            <p style={styles.loadingText}>Gemini-3.1-Flash-Lite가 인강 및 최적 교재 정보를 분석 중입니다...</p>
+            <p style={styles.loadingText}>Gemini-3.1-Flash-Lite가 해당 과목의 모든 인강 및 교재/후기를 정밀 분석 중입니다...</p>
           </div>
         )}
 
@@ -94,10 +94,7 @@ export default function App() {
           {results.map((item, index) => (
             <div 
               key={index} 
-              style={{
-                ...styles.card, 
-                borderColor: selectedLecture === item ? '#0066ff' : 'rgba(255,255,255,0.8)'
-              }}
+              style={styles.card}
               onClick={() => setSelectedLecture(item)}
             >
               <div style={styles.cardHeader}>
@@ -107,13 +104,13 @@ export default function App() {
               <h3 style={styles.lectureTitle}>{item.title}</h3>
               <p style={styles.feature}>{item.feature}</p>
               <div style={styles.cardFooter}>
-                <span style={styles.detailClickHint}>👉 클릭하여 상세 정보 & 추천 교재 보기</span>
+                <span style={styles.detailClickHint}>🔍 전체 교재 & 수강 후기 보기</span>
               </div>
             </div>
           ))}
         </div>
 
-        {/* 상세 모달 또는 상세 패널 영역 */}
+        {/* 상세 모달 영역 */}
         {selectedLecture && (
           <div style={styles.modalOverlay} onClick={() => setSelectedLecture(null)}>
             <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
@@ -127,25 +124,45 @@ export default function App() {
 
               <div style={styles.sectionBox}>
                 <h4 style={styles.sectionHeading}>📖 강의 상세 설명</h4>
-                <p style={styles.sectionText}>{selectedLecture.description || selectedLecture.feature}</p>
+                <p style={styles.sectionText}>{selectedLecture.description}</p>
               </div>
 
               <div style={styles.sectionBox}>
-                <h4 style={styles.sectionHeading}>📚 함께 풀면 좋은 시중 교재 추천</h4>
-                <div style={styles.bookCard}>
-                  <p style={styles.bookName}>📌 <strong>{selectedLecture.recommendedBook}</strong></p>
-                  <p style={styles.bookReason}>{selectedLecture.bookReason}</p>
+                <h4 style={styles.sectionHeading}>📚 함께 풀면 좋은 시중 교재 추천 (복수)</h4>
+                <div style={styles.booksGrid}>
+                  {selectedLecture.recommendedBooks && selectedLecture.recommendedBooks.map((book, bIdx) => (
+                    <div key={bIdx} style={styles.bookCard}>
+                      <img 
+                        src={book.imageUrl || 'https://via.placeholder.com/150x200?text=No+Image'} 
+                        alt={book.name} 
+                        style={styles.bookImage}
+                        onError={(e) => { e.target.src = 'https://via.placeholder.com/150x200?text=Book+Cover'; }}
+                      />
+                      <div style={styles.bookInfo}>
+                        <p style={styles.bookName}><strong>{book.name}</strong></p>
+                        <p style={styles.bookReason}>{book.reason}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              <div style={styles.linkBox}>
+              <div style={styles.actionBox}>
                 <a 
-                  href={selectedLecture.link || '#'} 
+                  href={selectedLecture.lectureLink || '#'} 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   style={styles.linkButton}
                 >
-                  🔗 인강 사이트로 이동하기
+                  🔗 인강 사이트 바로가기
+                </a>
+                <a 
+                  href={selectedLecture.reviewLink || '#'} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  style={styles.reviewButton}
+                >
+                  ⭐ 실제 수강 후기 보러가기
                 </a>
               </div>
             </div>
@@ -164,7 +181,7 @@ const styles = {
     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
   },
   container: {
-    maxWidth: '900px',
+    maxWidth: '1000px',
     margin: '0 auto',
   },
   header: {
@@ -240,7 +257,7 @@ const styles = {
   },
   resultsGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
     gap: '20px',
   },
   card: {
@@ -311,7 +328,7 @@ const styles = {
   modalContent: {
     backgroundColor: '#fff',
     borderRadius: '20px',
-    maxWidth: '600px',
+    maxWidth: '700px',
     width: '100%',
     padding: '30px',
     boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
@@ -353,7 +370,7 @@ const styles = {
     fontSize: '15px',
     fontWeight: '700',
     color: '#1e293b',
-    margin: '0 0 8px 0',
+    margin: '0 0 12px 0',
   },
   sectionText: {
     fontSize: '14px',
@@ -361,36 +378,69 @@ const styles = {
     lineHeight: '1.6',
     margin: 0,
   },
+  booksGrid: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+  },
   bookCard: {
+    display: 'flex',
+    gap: '14px',
     backgroundColor: '#fff',
     padding: '12px',
-    borderRadius: '8px',
+    borderRadius: '10px',
     border: '1px solid #cbd5e1',
+    alignItems: 'center',
+  },
+  bookImage: {
+    width: '60px',
+    height: '80px',
+    objectFit: 'cover',
+    borderRadius: '6px',
+    backgroundColor: '#e2e8f0',
+    flexShrink: 0,
+  },
+  bookInfo: {
+    flex: 1,
   },
   bookName: {
     fontSize: '14px',
     color: '#0f172a',
-    margin: '0 0 6px 0',
+    margin: '0 0 4px 0',
   },
   bookReason: {
     fontSize: '13px',
     color: '#64748b',
     margin: 0,
-    lineHeight: '1.5',
+    lineHeight: '1.4',
   },
-  linkBox: {
-    textAlign: 'center',
+  actionBox: {
+    display: 'flex',
+    gap: '10px',
     marginTop: '20px',
   },
   linkButton: {
-    display: 'inline-block',
+    flex: 1,
+    textAlign: 'center',
     backgroundColor: '#0066ff',
     color: '#fff',
-    padding: '14px 28px',
+    padding: '14px',
     borderRadius: '12px',
     textDecoration: 'none',
     fontWeight: '700',
-    fontSize: '15px',
+    fontSize: '14px',
     boxShadow: '0 4px 12px rgba(0, 102, 255, 0.3)',
+  },
+  reviewButton: {
+    flex: 1,
+    textAlign: 'center',
+    backgroundColor: '#10b981',
+    color: '#fff',
+    padding: '14px',
+    borderRadius: '12px',
+    textDecoration: 'none',
+    fontWeight: '700',
+    fontSize: '14px',
+    boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
   },
 };

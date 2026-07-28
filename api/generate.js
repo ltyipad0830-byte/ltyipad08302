@@ -31,7 +31,6 @@ module.exports = async function handler(req, res) {
     });
   }
 
-  // 사용자가 요청한 gemini-3.1-flash-lite를 우선 시도하고, 필요시 폴백 적용
   const modelsToTry = ["gemini-3.1-flash-lite", "gemini-1.5-flash", "gemini-2.0-flash"];
   let lastError = null;
 
@@ -39,7 +38,7 @@ module.exports = async function handler(req, res) {
 
   const prompt = `
     22개정 교육과정에 맞춰 학생들이 "${subject}" 과목의 인강을 찾고 있습니다.
-    메가스터디, 대성마이맥, EBS, 시대인재 등의 주요 사이트에 개설될 법한 해당 과목의 대표적인 인강 정보 4개를 추천해 주세요.
+    메가스터디, 대성마이맥, EBS, 시대인재 등 주요 사이트 각각에 개설된 해당 과목의 **모든 주요 강사의 대표 인강들을 누락 없이 전부(사이트당 여러 개 가능, 총 6~8개 이상)** 추천해 주세요.
     반드시 아래의 JSON 배열 형식으로만 반환해 주세요. 다른 설명이나 마크다운 서식은 절대 포함하지 마세요.
     
     [
@@ -49,9 +48,20 @@ module.exports = async function handler(req, res) {
         "title": "강의 제목",
         "feature": "핵심 특징 요약 (카드에 표시될 짧은 텍스트)",
         "description": "해당 강의에 대한 상세한 설명과 커리큘럼 안내",
-        "link": "https://www.megastudy.net",
-        "recommendedBook": "함께 풀면 좋은 시중 교재 이름 (예: 쎈 수학, 1등급 수학 등)",
-        "bookReason": "이 교재를 함께 풀면 좋은 이유 및 연계 학습법"
+        "lectureLink": "https://www.megastudy.net",
+        "reviewLink": "https://www.megastudy.net",
+        "recommendedBooks": [
+          {
+            "name": "교재 이름 1",
+            "reason": "교재 연계 학습법 및 추천 이유",
+            "imageUrl": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=200"
+          },
+          {
+            "name": "교재 이름 2",
+            "reason": "교재 연계 학습법 및 추천 이유",
+            "imageUrl": "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=200"
+          }
+        ]
       }
     ]
   `;
