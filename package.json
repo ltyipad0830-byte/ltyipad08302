@@ -1,7 +1,7 @@
 {
   "name": "exam-lec-finder",
-  "version": "1.3.0",
-  "description": "22개정 교육과정 인강 전면 비교 및 교재/후기 통합 플랫폼",
+  "version": "1.4.0",
+  "description": "22개정 교육과정 고정형 정밀 인강 및 교재/후기 플랫폼",
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
     "react": "18.2.0",

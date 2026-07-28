@@ -7,20 +7,31 @@ export default function App() {
   const [error, setError] = useState('');
   const [selectedInstructorGroup, setSelectedInstructorGroup] = useState(null);
 
+  // 로컬 캐시를 두어 동일 과목 재검색 시 결과가 바뀌지 않고 일관되게 유지되도록 함
+  const [cache, setCache] = useState({});
+
   const handleSearch = async (e) => {
     e.preventDefault();
-    if (!subject.trim()) return;
+    const trimmedSubject = subject.trim();
+    if (!trimmedSubject) return;
+
+    setSelectedInstructorGroup(null);
+
+    // 이미 검색했던 과목이면 캐시된 데이터를 그대로 사용하여 일관성 유지
+    if (cache[trimmedSubject]) {
+      setResults(cache[trimmedSubject]);
+      return;
+    }
 
     setLoading(true);
     setError('');
     setResults([]);
-    setSelectedInstructorGroup(null);
 
     try {
       const response = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ subject }),
+        body: JSON.stringify({ subject: trimmedSubject }),
       });
 
       const contentType = response.headers.get("content-type");
@@ -35,6 +46,8 @@ export default function App() {
         throw new Error(data.error || '데이터를 가져오지 못했습니다.');
       }
 
+      // 캐시에 저장
+      setCache(prev => ({ ...prev, [trimmedSubject]: data.results }));
       setResults(data.results);
     } catch (err) {
       setError(err.message);
@@ -62,9 +75,9 @@ export default function App() {
     <div style={styles.page}>
       <div style={styles.container}>
         <header style={styles.header}>
-          <span style={styles.badgeTop}>✨ 22개정 교육과정 전면 비교</span>
+          <span style={styles.badgeTop}>✨ 22개정 교육과정 정밀 비교</span>
           <h1 style={styles.title}>인강 전면 비교 & 교재/후기 플랫폼</h1>
-          <p style={styles.subtitle}>과목별 모든 강사의 전체 커리큘럼, 실제 교재 판매처 사진 및 수강 후기 모음</p>
+          <p style={styles.subtitle}>검색 결과 일관성 유지, 공식 플랫폼 링크 및 공인된 교재 표지 연동</p>
         </header>
 
         <form onSubmit={handleSearch} style={styles.formContainer}>
@@ -77,7 +90,7 @@ export default function App() {
               style={styles.input}
             />
             <button type="submit" disabled={loading} style={styles.button}>
-              {loading ? '⏳ 모든 인강 수집 중...' : '전체 인강 조회'}
+              {loading ? '⏳ 분석 중...' : '전체 인강 조회'}
             </button>
           </div>
         </form>
@@ -86,7 +99,7 @@ export default function App() {
 
         {loading && (
           <div style={styles.loadingContainer}>
-            <p style={styles.loadingText}>Gemini-3.1-Flash-Lite가 해당 과목의 모든 강사별 전체 인강 및 교재/후기를 정밀 분석 중입니다...</p>
+            <p style={styles.loadingText}>Gemini가 정확하고 일관된 강사별 인강 및 교재 정보를 불러오는 중입니다...</p>
           </div>
         )}
 
@@ -101,7 +114,7 @@ export default function App() {
                 <span style={getSiteBadgeStyle(group.site)}>{group.site}</span>
                 <span style={styles.instructorTag}>{group.instructor} 강사</span>
               </div>
-              <h3 style={styles.lectureTitle}>{group.instructor} 강사의 전체 강좌 ({group.lectures.length개})</h3>
+              <h3 style={styles.lectureTitle}>{group.instructor} 강사의 전체 강좌 ({group.lectures.length}개)</h3>
               <p style={styles.feature}>{group.mainFeature || '해당 강사의 대표 커리큘럼 및 전용 교재 완비'}</p>
               <div style={styles.cardFooter}>
                 <span style={styles.detailClickHint}>🔍 모든 강좌 & 교재 & 후기 보기</span>
@@ -110,7 +123,7 @@ export default function App() {
           ))}
         </div>
 
-        {/* 상세 모달 영역 (강사별 전체 인강 목록, 교재, 수강 후기 분리 제공) */}
+        {/* 상세 모달 영역 */}
         {selectedInstructorGroup && (
           <div style={styles.modalOverlay} onClick={() => setSelectedInstructorGroup(null)}>
             <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
@@ -122,7 +135,7 @@ export default function App() {
               <h2 style={styles.modalTitle}>{selectedInstructorGroup.instructor} 강사 통합 정보</h2>
               <p style={styles.modalInstructor}>소속 플랫폼: <strong>{selectedInstructorGroup.site}</strong></p>
 
-              {/* 1. 해당 강사의 모든 인강 목록 및 상세 설명 */}
+              {/* 1. 해당 강사의 모든 인강 목록 및 커리큘럼 */}
               <div style={styles.sectionBox}>
                 <h4 style={styles.sectionHeading}>📚 개설된 전체 인강 목록 및 커리큘럼</h4>
                 <div style={styles.lecturesListContainer}>
@@ -136,7 +149,7 @@ export default function App() {
                           rel="noopener noreferrer" 
                           style={styles.lecDirectLinkBtn}
                         >
-                          강의실 바로가기 ↗
+                          공식 강의실 바로가기 ↗
                         </a>
                       </div>
                       <p style={styles.lecItemDesc}>{lec.description}</p>
